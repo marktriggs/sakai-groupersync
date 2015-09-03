@@ -53,7 +53,7 @@ class UpdatedSites {
 
         PreparedStatement ps = db.prepareStatement(String.format(sql, selectColumn, table, where));
 
-        ps.setTimestamp(1, since);
+        ps.setTimestamp(1, since, new java.util.GregorianCalendar(java.util.TimeZone.getTimeZone("UTC")));
 
         ResultSet rs = ps.executeQuery();
 
