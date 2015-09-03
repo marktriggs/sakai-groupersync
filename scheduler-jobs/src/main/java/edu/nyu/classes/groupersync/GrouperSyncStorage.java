@@ -224,7 +224,7 @@ public class GrouperSyncStorage {
                             groupId = groupId.substring(groupId.lastIndexOf("/") + 1);
                         }
 
-                        insert.setString(1, "this-is-my-test-group-fa14-classes-" + groupId.substring(0, 4) + "@nyu.edu");
+                        insert.setString(1, "this-is-my-test-group:fa14:classes:" + groupId.substring(0, 4));
                         insert.setString(2, groupId);
                         insert.setString(3, groupId);
 
