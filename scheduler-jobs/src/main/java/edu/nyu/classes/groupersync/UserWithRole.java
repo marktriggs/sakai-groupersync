@@ -43,7 +43,12 @@ class UserWithRole {
             return role;
         }
 
-        if (role != null && role.toLowerCase().startsWith("i")) {
+        if (role == null) {
+            return "viewer";
+        }
+
+        if (role.toLowerCase().startsWith("i") || role.toLowerCase().equals("maintain")) {
+            // startsWith here because the CM API uses "I" and Sakai uses "Instructor".
             return "manager";
         } else {
             return "viewer";
