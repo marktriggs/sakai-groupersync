@@ -26,13 +26,21 @@ class UpdatedSites {
     }
 
     static Pattern SITE_ID_PATTERN = Pattern.compile("/site/([^/]*)/?");
+    static Pattern UUID_PATTERN = Pattern.compile("[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}");
 
     private String extractSiteId(String s) {
         Matcher m = SITE_ID_PATTERN.matcher(s);
         if (m.find()) {
             return m.group(1);
         } else {
+            m = UUID_PATTERN.matcher(s);
+
+            if (m.matches()) {
+                return s;
+            }
+
             log.error("Could not get a site ID out of: " + s);
+
             return null;
         }
     }
