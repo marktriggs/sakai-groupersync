@@ -6,7 +6,7 @@
     <artifactId>groupersync-scheduler-jobs</artifactId>
     <name>Sakai to Grouper synchronization</name>
     <description>A job for synchronizing groups and sections in Sakai with Grouper</description>
-    <packaging>jar</packaging>
+    <packaging>sakai-component</packaging>
     <version>0.1</version>
 
     <parent>
@@ -17,7 +17,7 @@
     </parent>
 
     <properties>
-        <deploy.target>shared</deploy.target>
+        <deploy.target>components</deploy.target>
     </properties>
 
 
@@ -27,7 +27,6 @@
             <groupId>edu.nyu.classes.groupersync</groupId>
             <artifactId>groupersync-api</artifactId>
             <version>0.1</version>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
