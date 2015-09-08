@@ -1,6 +1,15 @@
 <div> <!-- <div class="container"> -->
   <div> <!-- <div class="col-md-12"> -->
     <h2>Manage Google Groups</h2>
+
+    {{#if error}}
+        <div class="alert alert-danger">{{error}}</div>
+    {{/if}}
+
+    {{#if success}}
+        <div class="alert alert-success">{{success}}</div>
+    {{/if}}
+
     <table class="table table-striped table-bordered table-hover table-condensed">
       <thead>
         <tr>
@@ -11,27 +20,31 @@
         </tr>
       </thead>
       <tbody>
-      {{#each groups}}
-      <tr class="group-container" data-sakai-group-id="{{this.sakaiGroupId}}">
-        <td>{{this}}</td>
-        <td>{{status}}</td>
-        <td>
-            {{#if this.availableForSync}}
-                <button class="btn btn-xs btn-success create-group-btn">Create Google Group</button>
-            {{/if}}
-            {{#if this.markedForSync}}
-                <strong>{{address}}</strong><br>{{label}}
-            {{/if}}
-        </td>
-        <td>
-            <button class="btn btn-xs btn-default show-members-btn">Members</button>
-        </td>
-      </tr>
-      {{/each}}
+          <tr><th colspan="4">Site Group</th></tr>
+          {{#each wholeSite}}
+              {{> edu/nyu/classes/groupersync/tool/views/grouprows}}
+          {{/each}}
       </tbody>
+      {{#if sections}}
+      <tbody>
+          <tr><th colspan="4">Sections</th></tr>
+          {{#each sections}}
+              {{> edu/nyu/classes/groupersync/tool/views/grouprows}}
+          {{/each}}
+      </tbody>
+      {{/if}}
+      {{#if adhocGroups}}
+          <tbody>
+              <tr><th colspan="4">Adhoc Groups</th></tr>
+              {{#each adhocGroups}}
+                  {{> edu/nyu/classes/groupersync/tool/views/grouprows}}
+              {{/each}}
+          </tbody>
+      {{/if}}
+
     </table>
 
-    <div id="modal-area" class="modal fade" style="display: none" tabindex="-1">
+    <div id="modal-area" data-keyboard="true" class="modal fade" style="display: none" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -45,6 +58,32 @@
             </div>
         </div>
     </div>
+
+    <script id="create-group-template" type="text/template">
+
+        <div class="create-group-container">
+            <form class="create-group-form" method="POST">
+
+                <input type="hidden" class="sakaiGroupId" name="sakaiGroupId" />
+
+                <div class="form-group">
+                    <label for="group-description">Group description</label>
+                    <input type="text" class="form-control description" name="description" placeholder="Description of new group">
+                </div>
+
+                <div class="form-group">
+                    <label for="group-address">Group address</label>
+                    <div class="input-group">
+                    <input type="text" class="form-control groupId" maxlength=20 name="groupId" placeholder="Address of new group">
+                    <span class="input-group-addon requiredSuffix">{{requiredSuffix}}</span>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+
+    </script>
 
   </div>
 </div>

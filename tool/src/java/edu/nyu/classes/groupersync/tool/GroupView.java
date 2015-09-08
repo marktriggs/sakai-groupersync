@@ -48,7 +48,7 @@ class GroupView {
 
     public String getAddress() {
         if (groupInfo.getGrouperId() != null) {
-            return groupInfo.getGrouperId().replace(":", "-") + "@nyu.edu";
+            return AddressFormatter.format(groupInfo.getGrouperId());
         } else {
             return "";
         }

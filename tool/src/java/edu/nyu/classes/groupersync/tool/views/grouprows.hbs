@@ -1,0 +1,15 @@
+<tr class="group-container" data-sakai-group-id="{{this.sakaiGroupId}}">
+    <td>{{this}}</td>
+    <td>{{status}}</td>
+    <td>
+        {{#if this.availableForSync}}
+            <button class="btn btn-xs btn-success create-group-btn">Create Google Group</button>
+        {{/if}}
+        {{#if this.markedForSync}}
+            <strong>{{address}}</strong><br>{{label}}
+        {{/if}}
+    </td>
+    <td>
+        <button class="btn btn-xs btn-default show-members-btn">Members</button>
+    </td>
+</tr>

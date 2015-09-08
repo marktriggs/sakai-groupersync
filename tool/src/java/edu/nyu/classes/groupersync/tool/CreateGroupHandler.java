@@ -48,10 +48,13 @@ public class CreateGroupHandler extends BaseHandler {
 	    grouper.markGroupForSync(groupId + requiredSuffix,
 		    sakaiGroupId,
 		    description);
+
+	    response.sendRedirect(determineBaseURL().toString() + "?success=group_created");
+
 	} catch (IdUnusedException e) {
 	    throw new ServletException("Failed to find site", e);
 	} catch (GrouperSyncException e) {
-	    throw new ServletException("Failed to mark group for sync", e);
+	    response.sendRedirect(determineBaseURL().toString() + "?error=group_in_use");
 	}
     }
 }

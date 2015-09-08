@@ -8,6 +8,10 @@ import org.sakaiproject.component.cover.ComponentManager;
 import edu.nyu.classes.groupersync.api.GrouperSyncService;
 import org.sakaiproject.site.api.Site;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import org.sakaiproject.component.cover.ServerConfigurationService;
+import org.sakaiproject.tool.cover.ToolManager;
+import java.net.URL;
 
 abstract class BaseHandler {
 
@@ -30,6 +34,17 @@ abstract class BaseHandler {
         }
 
         return result;
+    }
+
+    protected URL determineBaseURL() throws ServletException {
+        String siteId = ToolManager.getCurrentPlacement().getContext();
+        String toolId = ToolManager.getCurrentPlacement().getId();
+
+        try {
+            return new URL(ServerConfigurationService.getPortalUrl() + "/tool/" + toolId + "/");
+        } catch (MalformedURLException e) {
+            throw new ServletException("Couldn't determine tool URL", e);
+        }
     }
 
     abstract public void handle(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException;

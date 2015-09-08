@@ -10,7 +10,12 @@ body {
 /* FIXME: Can probably use the bootstrap grid for this? */
 .modal-body {
     height: 300px;
-    overflow-y: scroll;
+    overflow-y: auto;
+}
+
+.modal-body .form-control {
+    padding: 6px 12px;
+    height: 34px;
 }
 
 .member-list .member .name {

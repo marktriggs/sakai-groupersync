@@ -27,6 +27,22 @@ import java.net.URL;
 
 public class IndexHandler extends BaseHandler {
 
+    enum MessageStrings {
+	GROUP_IN_USE("That group name is taken"),
+	GROUP_CREATED("Group successfully created");
+
+	private String msg;
+
+	MessageStrings(String msg) {
+	    this.msg = msg;
+	}
+
+	public String toString() {
+	    return msg;
+	}
+    }
+
+
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         response.setHeader("Content-Type", "text/html");
@@ -36,20 +52,40 @@ public class IndexHandler extends BaseHandler {
 
 	try {
 	    Site site = SiteService.getSite(siteId);
-	    Collection<GroupView> groups = new ArrayList<GroupView>();
 
-	    groups.add(new GroupView(site, "All site members", grouper));
+	    Collection<GroupView> wholeSite = new ArrayList<GroupView>();
+	    Collection<GroupView> sections = new ArrayList<GroupView>();
+	    Collection<GroupView> adhocGroups = new ArrayList<GroupView>();
+
+	    wholeSite.add(new GroupView(site, "All site members", grouper));
 	    for (AuthzGroup group : site.getGroups()) {
-		groups.add(new GroupView(group, grouper));
+		if (group.getProviderGroupId() == null) {
+		    adhocGroups.add(new GroupView(group, grouper));
+		} else {
+		    sections.add(new GroupView(group, grouper));
+		}
 	    }
 
 	    Map<String, Object> context = new HashMap<String, Object>();
 	    context.put("baseUrl", determineBaseURL());
 	    context.put("skinRepo", ServerConfigurationService.getString("skin.repo", ""));
 	    context.put("randomSakaiHeadStuff", request.getAttribute("sakai.html.head"));
-	    context.put("requiredSuffix", buildRequiredSuffix(site));
-	    context.put("groups", groups);
+	    context.put("requiredSuffix", AddressFormatter.format(buildRequiredSuffix(site)));
+
+	    context.put("wholeSite", wholeSite);
+	    context.put("sections", sections);
+	    context.put("adhocGroups", adhocGroups);
+
 	    context.put("subpage", "index");
+
+	    if (request.getParameter("error") != null) {
+		context.put("error", MessageStrings.valueOf(request.getParameter("error").toUpperCase()));
+	    }
+
+	    if (request.getParameter("success") != null) {
+		context.put("success", MessageStrings.valueOf(request.getParameter("success").toUpperCase()));
+	    }
+
 
 	    Handlebars handlebars = loadHandlebars();
 	    Template template = handlebars.compile("edu/nyu/classes/groupersync/tool/views/layout");
@@ -57,18 +93,6 @@ public class IndexHandler extends BaseHandler {
 	} catch (IdUnusedException e) {
 	    throw new ServletException("Couldn't find site", e);
 	}
-    }
-
-
-    private URL determineBaseURL() throws ServletException {
-        String siteId = ToolManager.getCurrentPlacement().getContext();
-        String toolId = ToolManager.getCurrentPlacement().getId();
-
-        try {
-            return new URL(ServerConfigurationService.getPortalUrl() + "/site/" + siteId + "/tool/" + toolId + "/");
-        } catch (MalformedURLException e) {
-            throw new ServletException("Couldn't determine tool URL", e);
-        }
     }
 
 
