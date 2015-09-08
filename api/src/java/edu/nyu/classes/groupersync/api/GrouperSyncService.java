@@ -6,6 +6,8 @@ public interface GrouperSyncService {
     
     public GroupInfo getGroupInfo(AuthzGroup group) throws GrouperSyncException;
 
+    public void markGroupForSync(final String groupId, final String sakaiGroupId, final String description) throws GrouperSyncException;
+
     public GrouperSyncStorage getStorage();
 
     public void init();

@@ -25,7 +25,13 @@ import org.sakaiproject.authz.api.AuthzGroup;
 import org.sakaiproject.site.api.Site;
 import org.sakaiproject.exception.IdUnusedException;
 import org.sakaiproject.component.cover.ComponentManager;
+import org.sakaiproject.authz.cover.SecurityService;
 import edu.nyu.classes.groupersync.api.GrouperSyncService;
+import java.net.MalformedURLException;
+import java.net.URL;
+import org.sakaiproject.tool.cover.SessionManager;
+import org.sakaiproject.site.api.Group;
+import edu.nyu.classes.groupersync.api.GrouperSyncException;
 
 public class GrouperSyncServlet extends HttpServlet {
 
@@ -36,7 +42,44 @@ public class GrouperSyncServlet extends HttpServlet {
 	}
 
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		doGet(request, response);
+		checkAccessControl();
+
+		GrouperSyncService grouper = getGrouperSyncService();
+		String siteId = ToolManager.getCurrentPlacement().getContext();
+
+		if (request.getPathInfo().indexOf("/create_group") >= 0) {
+			try {
+				Site site = SiteService.getSite(siteId);
+
+				String requiredSuffix = buildRequiredSuffix(site);
+
+				String groupId = request.getParameter("groupId");
+				String sakaiGroupId = request.getParameter("sakaiGroupId");
+				String description = request.getParameter("description");
+
+				if (siteId.equals(sakaiGroupId)) {
+					// Creating the 'all' users link.
+				} else {
+					Group group = site.getGroup(sakaiGroupId);
+
+					if (group == null) {
+						throw new ServletException("Group not found");
+					}
+
+					sakaiGroupId = group.getId();
+				}
+
+				grouper.markGroupForSync(groupId + requiredSuffix,
+						sakaiGroupId,
+						description);
+			} catch (IdUnusedException e) {
+				throw new ServletException("Failed to find site", e);
+			} catch (GrouperSyncException e) {
+				throw new ServletException("Failed to mark group for sync", e);
+			}
+		} else {
+			throw new ServletException("Unrecognized request");
+		}
 	}
 
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -45,6 +88,8 @@ public class GrouperSyncServlet extends HttpServlet {
 		GrouperSyncService grouper = getGrouperSyncService();
 
 		response.setHeader("Content-Type", "text/html");
+
+		URL baseUrl = determineBaseURL();
 
 		Handlebars handlebars = loadHandlebars();
 
@@ -63,6 +108,8 @@ public class GrouperSyncServlet extends HttpServlet {
 			context.put("groups", groups);
 			context.put("subpage", "index");
 
+			context.put("requiredSuffix", buildRequiredSuffix(site));
+			context.put("baseUrl", baseUrl);
 			context.put("skinRepo", ServerConfigurationService.getString("skin.repo", ""));
 			context.put("randomSakaiHeadStuff", request.getAttribute("sakai.html.head"));
 
@@ -76,8 +123,36 @@ public class GrouperSyncServlet extends HttpServlet {
 		}
 	}
 
-	private void checkAccessControl() {
-		//String siteId = ToolManager.getCurrentPlacement().getContext();
+	private String buildRequiredSuffix(Site site) {
+		String termEid = site.getProperties().getProperty(Site.PROP_SITE_TERM_EID);
+
+		if (termEid == null) {
+			termEid = "prj";
+		}
+
+		return ":" + termEid + ":classes:" + site.getId().substring(0, 4);
+	}
+
+
+	private void checkAccessControl() throws ServletException {
+		String siteId = ToolManager.getCurrentPlacement().getContext();
+
+		if (!SecurityService.unlock("site.manage", "/site/" + siteId)) {
+			LOG.error("Access denied to GrouperSync management tool for user " + SessionManager.getCurrentSessionUserId());
+			throw new ServletException("Access denied");
+		}
+	}
+
+
+	private URL determineBaseURL() throws ServletException {
+		String siteId = ToolManager.getCurrentPlacement().getContext();
+		String toolId = ToolManager.getCurrentPlacement().getId();
+
+		try {
+			return new URL(ServerConfigurationService.getPortalUrl() + "/site/" + siteId + "/tool/" + toolId + "/");
+		} catch (MalformedURLException e) {
+			throw new ServletException("Couldn't determine tool URL", e);
+		}
 	}
 
 

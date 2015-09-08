@@ -22,6 +22,11 @@ public class GrouperSyncServiceImpl implements GrouperSyncService {
     }
 
     @Override
+    public void markGroupForSync(final String groupId, final String sakaiGroupId, final String description) throws GrouperSyncException {
+        getStorage().markGroupForSync(groupId, sakaiGroupId, description);
+    }
+
+    @Override
     public void init() {
     }
 

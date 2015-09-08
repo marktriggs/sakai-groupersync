@@ -9,9 +9,19 @@ public class GroupInfo {
     
 
     public enum GroupStatus {
-        AVAILABLE_FOR_SYNC,
-        MARKED_FOR_SYNC,
-        UNKNOWN,
+        AVAILABLE_FOR_SYNC("Inactive"),
+        MARKED_FOR_SYNC("Active"),
+        UNKNOWN("Unknown");
+
+        private String label;
+
+        GroupStatus(String label) {
+            this.label = label;
+        }
+
+        public String getLabel() {
+            return label;
+        }
     }
 
     public GroupInfo() {

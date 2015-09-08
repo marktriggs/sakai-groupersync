@@ -46,10 +46,27 @@ class GroupView {
     }
 
     public String getStatus() {
-        return groupInfo.getStatus().toString().toLowerCase();
+        return groupInfo.getStatus().getLabel();
     }
 
-    public String getLabel () {
+    public String getAddress() {
+        if (groupInfo.getGrouperId() != null) {
+            return groupInfo.getGrouperId().replace(":", "-") + "@nyu.edu";
+        } else {
+            return "";
+        }
+    }
+
+    public String getLabel() {
         return groupInfo.getLabel();
     }
+
+    public String getSakaiGroupId() {
+        return group.getId();
+    }
+
+    public boolean isAvailableForSync() {
+        return groupInfo.getStatus().equals(GroupInfo.GroupStatus.AVAILABLE_FOR_SYNC);
+    }
+
 }

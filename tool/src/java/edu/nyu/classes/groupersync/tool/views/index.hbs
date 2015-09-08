@@ -12,11 +12,15 @@
       </thead>
       <tbody>
       {{#each groups}}
-      <tr>
+      <tr class="group-container" data-sakai-group-id="{{this.sakaiGroupId}}">
         <td>{{this}}</td>
         <td>{{this.status}}</td>
-        <td>{{this.groupName}}</td>
-        <td></td>
+        <td><strong>{{this.address}}</strong><br>{{this.label}}</td>
+        <td>
+            {{#if this.availableForSync}}
+            <button class="btn btn-primary create-group-btn">Create Google Group</button>
+            {{/if}}
+        </td>
       </tr>
       {{/each}}
       </tbody>
