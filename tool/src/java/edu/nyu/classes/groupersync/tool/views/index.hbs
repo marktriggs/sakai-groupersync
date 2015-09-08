@@ -14,16 +14,37 @@
       {{#each groups}}
       <tr class="group-container" data-sakai-group-id="{{this.sakaiGroupId}}">
         <td>{{this}}</td>
-        <td>{{this.status}}</td>
-        <td><strong>{{this.address}}</strong><br>{{this.label}}</td>
+        <td>{{status}}</td>
         <td>
             {{#if this.availableForSync}}
-            <button class="btn btn-primary create-group-btn">Create Google Group</button>
+                <button class="btn btn-xs btn-success create-group-btn">Create Google Group</button>
             {{/if}}
+            {{#if this.markedForSync}}
+                <strong>{{address}}</strong><br>{{label}}
+            {{/if}}
+        </td>
+        <td>
+            <button class="btn btn-xs btn-default show-members-btn">Members</button>
         </td>
       </tr>
       {{/each}}
       </tbody>
     </table>
+
+    <div id="modal-area" class="modal fade" style="display: none" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">List of members</h4>
+                </div>
+                <div class="modal-body"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
   </div>
 </div>

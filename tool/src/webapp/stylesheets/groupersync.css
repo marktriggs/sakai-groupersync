@@ -2,3 +2,34 @@ body {
     /* Fix 0.9em font size causing super small text size! */
     font-size: 1.2em !important;
 }
+
+.member-list {
+    list-style-type: none;
+}
+
+/* FIXME: Can probably use the bootstrap grid for this? */
+.modal-body {
+    height: 300px;
+    overflow-y: scroll;
+}
+
+.member-list .member .name {
+    display: inline-block;
+    width: 15em;
+    margin-right: 2em;
+    overflow: hidden;
+}
+
+.member-list .member .eid {
+    display: inline-block;
+    width: 6em;
+    margin-right: 2em;
+    overflow: hidden;
+}
+
+.member-list .member .role {
+    display: inline-block;
+    width: 12em;
+    overflow: hidden;
+}
+

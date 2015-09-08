@@ -67,4 +67,8 @@ class GroupView {
         return groupInfo.getStatus().equals(GroupInfo.GroupStatus.AVAILABLE_FOR_SYNC);
     }
 
+    public boolean isMarkedForSync() {
+        return groupInfo.getStatus().equals(GroupInfo.GroupStatus.MARKED_FOR_SYNC);
+    }
+
 }

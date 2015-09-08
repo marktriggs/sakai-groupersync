@@ -39,8 +39,6 @@ public class GrouperSyncStorageImpl implements GrouperSyncStorage {
                     rs.close();
                     ps.close();
                 }
-
-                ;
             });
         } catch (SQLException e) {
             throw new GrouperSyncException("Failure when finding group ID for Sakai group: " + sakaiGroupId, e);
