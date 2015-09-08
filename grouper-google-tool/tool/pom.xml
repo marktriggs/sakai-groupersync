@@ -6,7 +6,7 @@
 
     <name>grouper-google-tool</name>
     <groupId>edu.nyu.classes.groupersync</groupId>
-    <artifactId>tool</artifactId>
+    <artifactId>grouper-google-tool</artifactId>
 
     <packaging>war</packaging>
 
