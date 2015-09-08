@@ -3,7 +3,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>edu.nyu.classes.groupersync</groupId>
-  <artifactId>grouper-sync-scheduler-jobs</artifactId>
+  <artifactId>groupersync-scheduler-jobs</artifactId>
   <name>Sakai to Grouper synchronization</name>
   <description>A job for synchronizing groups and sections in Sakai with Grouper</description>
   <packaging>jar</packaging>
@@ -11,7 +11,7 @@
 
   <parent>
     <groupId>edu.nyu.classes.groupersync</groupId>
-    <artifactId>grouper-sync-base</artifactId>
+    <artifactId>groupersync-base</artifactId>
     <version>0.1</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
@@ -22,6 +22,13 @@
 
 
   <dependencies>
+
+    <dependency>
+      <groupId>edu.nyu.classes.groupersync</groupId>
+      <artifactId>groupersync-api</artifactId>
+      <version>0.1</version>
+      <scope>provided</scope>
+    </dependency>
 
     <dependency>
       <groupId>org.opensymphony.quartz</groupId>
@@ -78,25 +85,5 @@
   <build>
     <sourceDirectory>src/main/java</sourceDirectory>
   </build>
-
-  <repositories>
-    <repository>
-      <id>internal</id>
-      <layout>legacy</layout>
-      <url>file://${basedir}/internal</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
-    <repository>
-      <id>sakai-maven</id>
-      <name>Sakai Maven Repo</name>
-      <layout>default</layout>
-      <url>http://source.sakaiproject.org/maven2</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
-  </repositories>
 
 </project>

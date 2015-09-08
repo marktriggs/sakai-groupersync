@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <name>Grouper synchronization pack</name>
   <groupId>edu.nyu.classes.groupersync</groupId>
-  <artifactId>grouper-sync-pack</artifactId>
+  <artifactId>groupersync-pack</artifactId>
   
   <packaging>sakai-component</packaging>
   <properties>
@@ -12,7 +12,7 @@
   
   <parent>
     <groupId>edu.nyu.classes.groupersync</groupId>
-    <artifactId>grouper-sync-base</artifactId>
+    <artifactId>groupersync-base</artifactId>
     <version>0.1</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
@@ -20,8 +20,16 @@
   <dependencies>
     <dependency>
       <groupId>edu.nyu.classes.groupersync</groupId>
-      <artifactId>grouper-sync-scheduler-jobs</artifactId>
+      <artifactId>groupersync-scheduler-jobs</artifactId>
       <scope>runtime</scope>
+      <version>0.1</version>
+    </dependency>
+
+    <dependency>
+      <groupId>edu.nyu.classes.groupersync</groupId>
+      <artifactId>groupersync-impl</artifactId>
+      <scope>runtime</scope>
+      <version>0.1</version>
     </dependency>
   </dependencies>
 
