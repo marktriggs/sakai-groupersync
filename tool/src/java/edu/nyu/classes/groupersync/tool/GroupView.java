@@ -21,7 +21,6 @@ class GroupView {
 
     public GroupView(AuthzGroup group, String displayString, GrouperSyncService grouper) {
         this.group = group;
-        GrouperSyncService grouper1 = grouper;
         this.displayString = displayString;
 
         this.groupInfo = GroupInfo.unknown();
