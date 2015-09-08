@@ -97,6 +97,9 @@ public class GrouperSyncJob implements StatefulJob {
         }
     }
 
+    public void destroy() {
+    }
+
     private void registerQuartzJob(Scheduler scheduler, String jobName, Class className, String cronTrigger)
             throws SchedulerException, ParseException {
         // Delete any old instances of the job

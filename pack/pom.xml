@@ -21,14 +21,13 @@
         <dependency>
             <groupId>edu.nyu.classes.groupersync</groupId>
             <artifactId>groupersync-scheduler-jobs</artifactId>
-            <scope>runtime</scope>
+            <scope>provided</scope>
             <version>0.1</version>
         </dependency>
 
         <dependency>
             <groupId>edu.nyu.classes.groupersync</groupId>
             <artifactId>groupersync-impl</artifactId>
-            <scope>runtime</scope>
             <version>0.1</version>
         </dependency>
     </dependencies>

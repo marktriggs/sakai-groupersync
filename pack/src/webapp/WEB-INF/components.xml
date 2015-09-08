@@ -15,4 +15,11 @@
           singleton="true">
     </bean>
 
+    <bean id="edu.nyu.classes.groupersync.jobs.GrouperSyncJob"
+          class="edu.nyu.classes.groupersync.jobs.GrouperSyncJob"
+          init-method="init"
+          destroy-method="destroy"
+          singleton="true">
+    </bean>
+
 </beans>
