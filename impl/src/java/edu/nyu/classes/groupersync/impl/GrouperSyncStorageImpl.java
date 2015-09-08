@@ -1,61 +1,21 @@
 package edu.nyu.classes.groupersync.impl;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import edu.nyu.classes.groupersync.api.*;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.db.cover.SqlService;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Connection;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import edu.nyu.classes.groupersync.api.GroupInfo;
-import edu.nyu.classes.groupersync.api.GrouperSyncStorage;
-import edu.nyu.classes.groupersync.api.GrouperSyncException;
-import edu.nyu.classes.groupersync.api.UserWithRole;
-import edu.nyu.classes.groupersync.api.Sets;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 public class GrouperSyncStorageImpl implements GrouperSyncStorage {
 
     private static final Log log = LogFactory.getLog(GrouperSyncStorageImpl.class);
-
-    interface DBAction {
-        public void execute(Connection conn) throws SQLException;
-    }
-
-    static class DB {
-
-        public static void connection(DBAction action) throws SQLException {
-            Connection connection = null;
-            boolean oldAutoCommit;
-
-            try {
-                connection = SqlService.borrowConnection();
-                oldAutoCommit = connection.getAutoCommit();
-                connection.setAutoCommit(false);
-
-                action.execute(connection);
-
-                connection.setAutoCommit(oldAutoCommit);
-            } finally {
-                if (connection != null) {
-                    SqlService.returnConnection(connection);
-                }
-            }
-        }
-    }
-
 
     // Return information about a Sakai group that was marked as needing syncing.
     //
@@ -65,7 +25,7 @@ public class GrouperSyncStorageImpl implements GrouperSyncStorage {
         final GroupInfo[] result = new GroupInfo[1];
 
         try {
-            DB.connection(new DBAction () {
+            DB.connection(new DBAction() {
                 public void execute(Connection connection) throws SQLException {
                     PreparedStatement ps = connection.prepareStatement("select group_id, sakai_group_id, description from grouper_groups where sakai_group_id = ?");
                     ps.setString(1, sakaiGroupId);
@@ -78,7 +38,9 @@ public class GrouperSyncStorageImpl implements GrouperSyncStorage {
 
                     rs.close();
                     ps.close();
-                };
+                }
+
+                ;
             });
         } catch (SQLException e) {
             throw new GrouperSyncException("Failure when finding group ID for Sakai group: " + sakaiGroupId, e);
@@ -87,13 +49,12 @@ public class GrouperSyncStorageImpl implements GrouperSyncStorage {
         return result[0];
     }
 
-
     @Override
     public Set<UserWithRole> getMembers(final String groupId) throws GrouperSyncException {
         final Set<UserWithRole> result = new HashSet<UserWithRole>();
 
         try {
-            DB.connection(new DBAction () {
+            DB.connection(new DBAction() {
                 public void execute(Connection connection) throws SQLException {
                     PreparedStatement ps = connection.prepareStatement("select netid, role from grouper_group_users where group_id = ?");
                     ps.setString(1, groupId);
@@ -106,7 +67,9 @@ public class GrouperSyncStorageImpl implements GrouperSyncStorage {
 
                     rs.close();
                     ps.close();
-                };
+                }
+
+                ;
             });
         } catch (SQLException e) {
             throw new GrouperSyncException("Failure when fetching members for group: " + groupId, e);
@@ -115,15 +78,14 @@ public class GrouperSyncStorageImpl implements GrouperSyncStorage {
         return result;
     }
 
-
     @Override
     public void recordChanges(final String groupId,
                               final Set<UserWithRole> addedUsers,
                               final Set<UserWithRole> droppedUsers,
                               final Set<UserWithRole> changedRoles)
-        throws GrouperSyncException {
+            throws GrouperSyncException {
         try {
-            DB.connection(new DBAction () {
+            DB.connection(new DBAction() {
                 public void execute(Connection connection) throws SQLException {
                     PreparedStatement ps = null;
 
@@ -153,21 +115,22 @@ public class GrouperSyncStorageImpl implements GrouperSyncStorage {
                     ps.close();
 
                     connection.commit();
-                };
+                }
+
+                ;
             });
         } catch (SQLException e) {
             throw new GrouperSyncException("Failure when recording change in members for group: " + groupId, e);
         }
     }
 
-
     @Override
     public Date getLastRunDate() throws GrouperSyncException {
         // Default to 30 days ago just to avoid checking *every* site...
-        final Date[] result = new Date[] { new Date(System.currentTimeMillis() - (30 * 24 * 60 * 60 * 1000)) };
+        final Date[] result = new Date[]{new Date(System.currentTimeMillis() - (30 * 24 * 60 * 60 * 1000))};
 
         try {
-            DB.connection(new DBAction () {
+            DB.connection(new DBAction() {
                 public void execute(Connection connection) throws SQLException {
                     PreparedStatement ps = connection.prepareStatement("select value from grouper_status where setting = 'last_run_time'");
 
@@ -179,7 +142,9 @@ public class GrouperSyncStorageImpl implements GrouperSyncStorage {
 
                     rs.close();
                     ps.close();
-                };
+                }
+
+                ;
             });
         } catch (SQLException e) {
             throw new GrouperSyncException("Failure when getting job last_run_time", e);
@@ -187,12 +152,11 @@ public class GrouperSyncStorageImpl implements GrouperSyncStorage {
 
         return result[0];
     }
-    
 
     @Override
     public void setLastRunDate(final Date date) throws GrouperSyncException {
         try {
-            DB.connection(new DBAction () {
+            DB.connection(new DBAction() {
                 public void execute(Connection connection) throws SQLException {
                     PreparedStatement ps = connection.prepareStatement("delete from grouper_status where setting = 'last_run_time'");
                     ps.executeUpdate();
@@ -205,18 +169,19 @@ public class GrouperSyncStorageImpl implements GrouperSyncStorage {
                     ps.close();
 
                     connection.commit();
-                };
+                }
+
+                ;
             });
         } catch (SQLException e) {
             throw new GrouperSyncException("Failure when setting job last_run_time", e);
         }
     }
 
-
     @Override
     public void markGroupForSync(final String groupId, final String sakaiGroupId, final String description) throws GrouperSyncException {
         try {
-            DB.connection(new DBAction () {
+            DB.connection(new DBAction() {
                 public void execute(Connection connection) throws SQLException {
                     PreparedStatement insert = connection.prepareStatement("insert into grouper_groups (group_id, sakai_group_id, description) values (?, ?, ?)");
 
@@ -228,7 +193,9 @@ public class GrouperSyncStorageImpl implements GrouperSyncStorage {
                     insert.close();
 
                     connection.commit();
-                };
+                }
+
+                ;
             });
         } catch (SQLException e) {
             throw new GrouperSyncException("Failure while inserting group", e);
@@ -240,12 +207,12 @@ public class GrouperSyncStorageImpl implements GrouperSyncStorage {
     @Override
     public void prepopulateGroupsBasedOnThisOneWeirdTrick() throws GrouperSyncException {
         try {
-            DB.connection(new DBAction () {
+            DB.connection(new DBAction() {
                 public void execute(Connection connection) throws SQLException {
                     PreparedStatement ps = connection.prepareStatement("select sr.realm_id" +
-                                                                       " from sakai_realm sr" +
-                                                                       " inner join sakai_realm_rl_gr srrg on srrg.realm_key = sr.realm_key" +
-                                                                       " where srrg.user_id = (select user_id from sakai_user_id_map where eid = 'grouper_sync')");
+                            " from sakai_realm sr" +
+                            " inner join sakai_realm_rl_gr srrg on srrg.realm_key = sr.realm_key" +
+                            " where srrg.user_id = (select user_id from sakai_user_id_map where eid = 'grouper_sync')");
 
                     ResultSet rs = ps.executeQuery();
 
@@ -264,7 +231,8 @@ public class GrouperSyncStorageImpl implements GrouperSyncStorage {
                         // This might fail for groups we've already handled, but that's OK.
                         try {
                             insert.executeUpdate();
-                        } catch (SQLException e) {}
+                        } catch (SQLException e) {
+                        }
                         insert.close();
                     }
 
@@ -272,10 +240,39 @@ public class GrouperSyncStorageImpl implements GrouperSyncStorage {
                     ps.close();
 
                     connection.commit();
-                };
+                }
+
+                ;
             });
         } catch (SQLException e) {
             throw new GrouperSyncException("Failure while prepopulating groups", e);
+        }
+    }
+
+
+    interface DBAction {
+        void execute(Connection conn) throws SQLException;
+    }
+
+    static class DB {
+
+        public static void connection(DBAction action) throws SQLException {
+            Connection connection = null;
+            boolean oldAutoCommit;
+
+            try {
+                connection = SqlService.borrowConnection();
+                oldAutoCommit = connection.getAutoCommit();
+                connection.setAutoCommit(false);
+
+                action.execute(connection);
+
+                connection.setAutoCommit(oldAutoCommit);
+            } finally {
+                if (connection != null) {
+                    SqlService.returnConnection(connection);
+                }
+            }
         }
     }
 

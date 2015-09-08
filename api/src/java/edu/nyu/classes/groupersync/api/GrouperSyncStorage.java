@@ -1,23 +1,23 @@
 package edu.nyu.classes.groupersync.api;
 
-import java.util.Set;
 import java.util.Date;
+import java.util.Set;
 
 public interface GrouperSyncStorage {
-    public GroupInfo getGroupInfo(final String sakaiGroupId) throws GrouperSyncException;
+    GroupInfo getGroupInfo(final String sakaiGroupId) throws GrouperSyncException;
 
-    public Set<UserWithRole> getMembers(final String groupId) throws GrouperSyncException;
+    Set<UserWithRole> getMembers(final String groupId) throws GrouperSyncException;
 
-    public void recordChanges(final String groupId,
-                              final Set<UserWithRole> addedUsers,
-                              final Set<UserWithRole> droppedUsers,
-                              final Set<UserWithRole> changedRoles) throws GrouperSyncException;
+    void recordChanges(final String groupId,
+                       final Set<UserWithRole> addedUsers,
+                       final Set<UserWithRole> droppedUsers,
+                       final Set<UserWithRole> changedRoles) throws GrouperSyncException;
 
-    public Date getLastRunDate() throws GrouperSyncException;
+    Date getLastRunDate() throws GrouperSyncException;
 
-    public void setLastRunDate(final Date date) throws GrouperSyncException;
+    void setLastRunDate(final Date date) throws GrouperSyncException;
 
-    public void markGroupForSync(final String groupId, final String sakaiGroupId, final String description) throws GrouperSyncException;
+    void markGroupForSync(final String groupId, final String sakaiGroupId, final String description) throws GrouperSyncException;
 
-    public void prepopulateGroupsBasedOnThisOneWeirdTrick() throws GrouperSyncException;
+    void prepopulateGroupsBasedOnThisOneWeirdTrick() throws GrouperSyncException;
 }

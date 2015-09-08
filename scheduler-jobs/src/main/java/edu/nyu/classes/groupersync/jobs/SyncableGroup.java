@@ -1,19 +1,21 @@
 package edu.nyu.classes.groupersync.jobs;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.HashMap;
-import java.util.Map;
-
 import edu.nyu.classes.groupersync.api.UserWithRole;
+
+import java.util.*;
 
 // FIXME: Lombok!
 class SyncableGroup {
 
-    private Collection<UserWithRole> members;
-    private String id;
-    private String title;
+    private final Collection<UserWithRole> members;
+    private final String id;
+    private final String title;
+
+    public SyncableGroup(String id, String title, Collection<UserWithRole> members) {
+        this.id = id;
+        this.title = title;
+        this.members = dedupeMemberships(members);
+    }
 
     public Collection<UserWithRole> getMembers() {
         return members;
@@ -25,12 +27,6 @@ class SyncableGroup {
 
     public String getTitle() {
         return title;
-    }
-
-    public SyncableGroup(String id, String title, Collection<UserWithRole> members) {
-        this.id = id;
-        this.title = title;
-        this.members = dedupeMemberships(members);
     }
 
     public Set<String> getUserIds() {

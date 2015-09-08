@@ -1,26 +1,22 @@
 package edu.nyu.classes.groupersync.jobs;
 
-import org.sakaiproject.site.cover.SiteService;
-import org.sakaiproject.site.api.Group;
-import java.util.Collection;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Set;
-import org.sakaiproject.site.cover.SiteService;
+import edu.nyu.classes.groupersync.api.UserWithRole;
+import org.sakaiproject.authz.api.AuthzGroup;
 import org.sakaiproject.authz.api.Member;
+import org.sakaiproject.coursemanagement.api.CourseManagementService;
+import org.sakaiproject.exception.IdUnusedException;
+import org.sakaiproject.site.api.Site;
+import org.sakaiproject.site.cover.SiteService;
+
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
-import org.sakaiproject.exception.IdUnusedException;
-import org.sakaiproject.coursemanagement.api.CourseManagementService;
-import org.sakaiproject.site.api.Site;
-import org.sakaiproject.authz.api.AuthzGroup;
-
-import edu.nyu.classes.groupersync.api.UserWithRole;
 
 class SiteGroupReader {
 
-    private String siteId;
-    private CourseManagementService cms;
+    private final String siteId;
+    private final CourseManagementService cms;
 
     public SiteGroupReader(String siteId, CourseManagementService cms) {
         this.siteId = siteId;
@@ -46,7 +42,7 @@ class SiteGroupReader {
         for (AuthzGroup sakaiGroup : sakaiGroups) {
             List<UserWithRole> members = new ArrayList<UserWithRole>();
             HashSet<String> inactiveUsers = new HashSet<String>();
-        
+
             // Load direct members of this group
             for (Member m : sakaiGroup.getMembers()) {
                 if (!m.isActive()) {
@@ -65,7 +61,7 @@ class SiteGroupReader {
             // Plus those provided by sections
             if (provider != null) {
                 HashSet<String> seenUsers = new HashSet<String>();
-                
+
                 for (String providerId : provider.split("\\+")) {
                     for (org.sakaiproject.coursemanagement.api.Membership m : cms.getSectionMemberships(providerId)) {
                         if (seenUsers.contains(m.getUserId()) || inactiveUsers.contains(m.getUserId())) {

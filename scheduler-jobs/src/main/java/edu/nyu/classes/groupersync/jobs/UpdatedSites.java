@@ -1,32 +1,25 @@
 package edu.nyu.classes.groupersync.jobs;
 
-import java.util.Date;
-import java.util.ArrayList;
-import java.sql.ResultSet;
-import java.sql.PreparedStatement;
-import java.util.regex.Matcher;
-
-import org.apache.commons.logging.LogFactory;
-import java.sql.SQLException;
-import java.util.List;
-import java.sql.Timestamp;
-import java.sql.Connection;
-import java.util.regex.Pattern;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.db.api.SqlService;
 
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 class UpdatedSites {
-    private SqlService sqlService;
     private static final Log log = LogFactory.getLog(UpdatedSites.class);
-
+    private static final Pattern SITE_ID_PATTERN = Pattern.compile("/site/([^/]*)/?");
+    private static final Pattern UUID_PATTERN = Pattern.compile("[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}");
+    private final SqlService sqlService;
     public UpdatedSites(SqlService sqlService) {
         this.sqlService = sqlService;
     }
-
-    static Pattern SITE_ID_PATTERN = Pattern.compile("/site/([^/]*)/?");
-    static Pattern UUID_PATTERN = Pattern.compile("[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}");
 
     private String extractSiteId(String s) {
         Matcher m = SITE_ID_PATTERN.matcher(s);
@@ -48,7 +41,7 @@ class UpdatedSites {
     private void addUpdatedSites(Connection db, String selectColumn, String table,
                                  Timestamp since, String where,
                                  List<UpdatedSite> result)
-        throws SQLException {
+            throws SQLException {
         String sql = "select %s, modifiedon from %s where modifiedon >= ? AND %s";
 
         PreparedStatement ps = db.prepareStatement(String.format(sql, selectColumn, table, where));
@@ -70,7 +63,7 @@ class UpdatedSites {
     }
 
     private void addSitesWithUpdatedRosters(Connection db, Timestamp since, List<UpdatedSite> result)
-        throws SQLException {
+            throws SQLException {
 
         // The cm_member_container_t only gives us modification stamps down to
         // day granularity, so we're going to pull back some updates
@@ -78,10 +71,10 @@ class UpdatedSites {
         // for this not to matter too much.
 
         String sql = ("select sr.realm_id, cm.last_modified_date " +
-                      "from cm_member_container_t cm " +
-                      "inner join sakai_realm_provider srp on srp.provider_id = cm.enterprise_id " +
-                      "inner join sakai_realm sr on sr.realm_key = srp.realm_key " +
-                      "where cm.class_discr = 'org.sakaiproject.coursemanagement.impl.SectionCmImpl' AND cm.last_modified_date >= ?");
+                "from cm_member_container_t cm " +
+                "inner join sakai_realm_provider srp on srp.provider_id = cm.enterprise_id " +
+                "inner join sakai_realm sr on sr.realm_key = srp.realm_key " +
+                "where cm.class_discr = 'org.sakaiproject.coursemanagement.impl.SectionCmImpl' AND cm.last_modified_date >= ?");
 
         PreparedStatement ps = db.prepareStatement(sql);
 

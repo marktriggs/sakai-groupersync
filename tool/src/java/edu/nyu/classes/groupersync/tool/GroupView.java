@@ -1,19 +1,17 @@
 package edu.nyu.classes.groupersync.tool;
 
+import edu.nyu.classes.groupersync.api.GroupInfo;
 import edu.nyu.classes.groupersync.api.GrouperSyncException;
 import edu.nyu.classes.groupersync.api.GrouperSyncService;
-import edu.nyu.classes.groupersync.api.GroupInfo;
-import org.sakaiproject.authz.api.AuthzGroup;
-
-import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.sakaiproject.authz.api.AuthzGroup;
 
 class GroupView {
     private static final Log log = LogFactory.getLog(GroupView.class);
 
-    private GrouperSyncService grouper;
-    private AuthzGroup group;
-    private String displayString;
+    private final AuthzGroup group;
+    private final String displayString;
 
     private GroupInfo groupInfo;
 
@@ -23,7 +21,7 @@ class GroupView {
 
     public GroupView(AuthzGroup group, String displayString, GrouperSyncService grouper) {
         this.group = group;
-        this.grouper = grouper;
+        GrouperSyncService grouper1 = grouper;
         this.displayString = displayString;
 
         this.groupInfo = GroupInfo.unknown();

@@ -1,55 +1,22 @@
 package edu.nyu.classes.groupersync.jobs;
 
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.ArrayList;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
-
-import org.sakaiproject.db.api.SqlService;
-
-import org.quartz.StatefulJob;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-
-import org.sakaiproject.site.cover.SiteService;
-import org.sakaiproject.site.api.Group;
-import org.sakaiproject.authz.api.Member;
-import org.sakaiproject.exception.IdUnusedException;
-
-import org.sakaiproject.coursemanagement.api.CourseManagementService;
-
+import edu.nyu.classes.groupersync.api.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import java.text.ParseException;
-import org.apache.commons.logging.Log;
-import org.quartz.CronTrigger;
-import org.quartz.JobDetail;
-import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
-import org.quartz.Trigger;
+import org.quartz.*;
 import org.sakaiproject.api.app.scheduler.JobBeanWrapper;
 import org.sakaiproject.api.app.scheduler.SchedulerManager;
 import org.sakaiproject.component.cover.ComponentManager;
 import org.sakaiproject.component.cover.ServerConfigurationService;
+import org.sakaiproject.coursemanagement.api.CourseManagementService;
+import org.sakaiproject.db.api.SqlService;
+import org.sakaiproject.exception.IdUnusedException;
 
-import edu.nyu.classes.groupersync.api.GroupInfo;
-import edu.nyu.classes.groupersync.api.GrouperSyncService;
-import edu.nyu.classes.groupersync.api.GrouperSyncStorage;
-import edu.nyu.classes.groupersync.api.GrouperSyncException;
-import edu.nyu.classes.groupersync.api.UserWithRole;
-import edu.nyu.classes.groupersync.api.Sets;
+import java.text.ParseException;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 public class GrouperSyncJob implements StatefulJob {
     private static final Log log = LogFactory.getLog(GrouperSyncJob.class);
@@ -84,12 +51,12 @@ public class GrouperSyncJob implements StatefulJob {
                 Set<UserWithRole> addedUsers = Sets.subtract(currentMembers, formerMembers, byUsername);
                 Set<UserWithRole> droppedUsers = Sets.subtract(formerMembers, currentMembers, byUsername);
                 Set<UserWithRole> changedRoles = Sets.subtract(Sets.subtract(currentMembers, formerMembers),
-                                                               addedUsers);
+                        addedUsers);
 
                 log.info("Added users: " + addedUsers);
                 log.info("Dropped users: " + droppedUsers);
                 log.info("Changed roles: " + changedRoles);
-            
+
                 storage.recordChanges(grouperGroupId, addedUsers, droppedUsers, changedRoles);
             } catch (GrouperSyncException e) {
                 log.error("Hit an error while syncing Sakai group: " + syncableGroup.getId(), e);
@@ -97,7 +64,7 @@ public class GrouperSyncJob implements StatefulJob {
         }
     }
 
-    protected void syncGroups(UpdatedSite update, GrouperSyncStorage storage, CourseManagementService courseManagement) {
+    private void syncGroups(UpdatedSite update, GrouperSyncStorage storage, CourseManagementService courseManagement) {
         try {
             log.info("Syncing groups for site: " + update.getSiteId());
 
@@ -131,7 +98,7 @@ public class GrouperSyncJob implements StatefulJob {
     }
 
     private void registerQuartzJob(Scheduler scheduler, String jobName, Class className, String cronTrigger)
-        throws SchedulerException, ParseException {
+            throws SchedulerException, ParseException {
         // Delete any old instances of the job
         scheduler.deleteJob(jobName, jobName);
 
@@ -148,8 +115,8 @@ public class GrouperSyncJob implements StatefulJob {
 
     public void execute(JobExecutionContext context) throws JobExecutionException {
         try {
-            SqlService sqlService = (SqlService)ComponentManager.get("org.sakaiproject.db.api.SqlService");
-            CourseManagementService cms = (CourseManagementService)ComponentManager.get("org.sakaiproject.coursemanagement.api.CourseManagementService");
+            SqlService sqlService = (SqlService) ComponentManager.get("org.sakaiproject.db.api.SqlService");
+            CourseManagementService cms = (CourseManagementService) ComponentManager.get("org.sakaiproject.coursemanagement.api.CourseManagementService");
 
             GrouperSyncService grouper = (GrouperSyncService) ComponentManager.get("edu.nyu.classes.groupersync.api.GrouperSyncService");
 

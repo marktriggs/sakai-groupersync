@@ -1,10 +1,6 @@
 package edu.nyu.classes.groupersync.api;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.Collection;
+import java.util.*;
 
 public class Sets {
 
@@ -13,10 +9,6 @@ public class Sets {
         result.removeAll(set2);
 
         return result;
-    }
-
-    public interface KeyFn<T> {
-        public Object key(T obj);
     }
 
     public static <T> Set<T> union(Collection<T> set1, Collection<T> set2) {
@@ -40,6 +32,10 @@ public class Sets {
         }
 
         return new HashSet(map.values());
+    }
+
+    public interface KeyFn<T> {
+        Object key(T obj);
     }
 
 

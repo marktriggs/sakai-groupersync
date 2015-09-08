@@ -1,8 +1,8 @@
 package edu.nyu.classes.groupersync.api;
 
 public class UserWithRole {
-    private String username;
-    private String role;
+    private final String username;
+    private final String role;
 
     public UserWithRole(String username, String role) {
         this.username = username;
@@ -21,7 +21,7 @@ public class UserWithRole {
         return String.format("#<%s [%s]>", username, role);
     }
 
-    public String hashKey() {
+    private String hashKey() {
         return username + "_" + role;
     }
 

@@ -1,25 +1,25 @@
 <?xml version="1.0"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
 
-  <name>groupersync-impl</name>
-  <groupId>edu.nyu.classes.groupersync</groupId>
-  <artifactId>groupersync-impl</artifactId>
-  
-  <packaging>jar</packaging>
-  
-  <parent>
+    <name>groupersync-impl</name>
     <groupId>edu.nyu.classes.groupersync</groupId>
-    <artifactId>groupersync-base</artifactId>
-    <version>0.1</version>
-    <relativePath>../pom.xml</relativePath>
-  </parent>
+    <artifactId>groupersync-impl</artifactId>
 
-  <properties>
-    <deploy.target/>
-  </properties>
+    <packaging>jar</packaging>
+
+    <parent>
+        <groupId>edu.nyu.classes.groupersync</groupId>
+        <artifactId>groupersync-base</artifactId>
+        <version>0.1</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <properties>
+        <deploy.target/>
+    </properties>
 
     <dependencies>
         <dependency>
@@ -30,8 +30,8 @@
         </dependency>
 
         <dependency>
-          <groupId>commons-logging</groupId>
-          <artifactId>commons-logging</artifactId>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
         </dependency>
     </dependencies>
 
