@@ -69,7 +69,7 @@
 
                 <div class="form-group">
                     <label for="group-description">Group description</label>
-                    <input type="text" class="form-control description" maxlength=70 name="description" placeholder="Description of new group">
+                    <input required="true" type="text" class="form-control description" maxlength=70 name="description" placeholder="Description of new group">
                     <div>
                         <small class="description-character-count text-muted">
                             <span class="characters-remaining"></span> characters remaining
@@ -80,8 +80,11 @@
                 <div class="form-group">
                     <label for="group-address">Group address</label>
                     <div class="input-group">
-                        <input type="text" class="form-control groupId" name="groupId" placeholder="Address of new group">
+                        <input required="true" type="text" class="form-control groupId" name="groupId" placeholder="Address of new group">
                         <span class="input-group-addon requiredSuffix">{{requiredSuffix}}</span>
+                        <span class="input-group-btn">
+                            <button type="button" class="btn btn-default reset-address-btn"><i class="glyphicon glyphicon-remove"></i></button>
+                        </span>
                     </div>
                     <div>
                         <small class="group-address-character-count text-muted">

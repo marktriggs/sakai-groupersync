@@ -77,6 +77,13 @@
                 return false;
             }
         });
+
+        this.form.find('.reset-address-btn').on('click', function () {
+            self.addressInput.val('');
+            self.descriptionInput.trigger('change');
+            return false;
+        });
+
     };
 
 
@@ -94,6 +101,7 @@
         this.countMessage = $countMessage;
 
         this.bindToEvents();
+        this.updateCountMessage();
     };
 
 
