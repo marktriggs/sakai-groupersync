@@ -32,7 +32,7 @@
             .replace(/ +/g, '-')
             .substring(0, this.calculateMaxLength());
 
-        this.addressInput.val(this.lastGeneratedValue);
+        this.addressInput.val(this.lastGeneratedValue).trigger("change");
     };
 
 
@@ -45,6 +45,39 @@
 
 
     exports.AutoPopulateHandler = AutoPopulateHandler;
+}(this));
+
+
+
+// Grouper Character Count
+(function (exports) {
+    "use strict";
+
+    function CharacterCountHandler($input, $countMessage) {
+        this.$input = $input;
+        this.$countMessage = $countMessage;
+
+        this.bindToEvents();
+    };
+
+
+    CharacterCountHandler.prototype.bindToEvents = function() {
+        var self = this;
+        self.$input.on('keyup change', function () {
+            self.updateCountMessage();
+        });
+    };
+
+
+    CharacterCountHandler.prototype.updateCountMessage = function() {
+        var count = this.$input.val().length;
+        var max = parseInt(this.$input.attr("maxLength"));
+        var remaining = max - count;
+    
+        this.$countMessage.find(".group-address-characters-remaining").html(remaining);
+    };
+  
+    exports.CharacterCountHandler = CharacterCountHandler;
 }(this));
 
 
@@ -73,6 +106,7 @@
             resizeFrame();
             form.find('.description').focus();
             new AutoPopulateHandler(form);
+            new CharacterCountHandler(form.find(":input.groupId"), form.find(".group-address-character-count"));
         });
     };
 
