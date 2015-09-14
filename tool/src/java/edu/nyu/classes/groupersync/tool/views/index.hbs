@@ -74,9 +74,12 @@
                 <div class="form-group">
                     <label for="group-address">Group address</label>
                     <div class="input-group">
-                    <input type="text" class="form-control groupId" maxlength=20 name="groupId" placeholder="Address of new group">
-                    <span class="input-group-addon requiredSuffix">{{requiredSuffix}}</span>
+                        <input type="text" class="form-control groupId" maxlength=20 name="groupId" placeholder="Address of new group">
+                        <span class="input-group-addon requiredSuffix">{{requiredSuffix}}</span>
                     </div>
+                    <small class="group-address-character-count text-muted">
+                        <span class="group-address-characters-remaining"></span> characters remaining
+                    </small>
                 </div>
 
                 <button type="submit" class="btn btn-primary">Submit</button>
