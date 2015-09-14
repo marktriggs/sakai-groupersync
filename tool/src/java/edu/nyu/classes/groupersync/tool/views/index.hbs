@@ -64,6 +64,7 @@
         <div class="create-group-container">
             <form class="create-group-form" method="POST">
 
+                <input type="hidden" name="sakai_csrf_token" value="{{csrfToken}}" />
                 <input type="hidden" class="sakaiGroupId" name="sakaiGroupId" />
 
                 <div class="form-group">

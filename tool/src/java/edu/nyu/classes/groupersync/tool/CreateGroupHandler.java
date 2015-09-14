@@ -12,12 +12,23 @@ import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import edu.nyu.classes.groupersync.api.GrouperSyncService;
+import org.sakaiproject.tool.cover.SessionManager;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 
 public class CreateGroupHandler extends BaseHandler {
+
+    private static final Log log = LogFactory.getLog(CreateGroupHandler.class);
+
 
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 	try {
+	    if (!checkCSRFToken(request.getParameterMap())) {
+		throw new ServletException("CSRF token check failed");
+	    }
+
 	    GrouperSyncService grouper = getGrouperSyncService();
 	    String siteId = ToolManager.getCurrentPlacement().getContext();
 
@@ -57,4 +68,22 @@ public class CreateGroupHandler extends BaseHandler {
 	    response.sendRedirect(determineBaseURL().toString() + "?error=group_in_use");
 	}
     }
+
+
+    private boolean checkCSRFToken(Map<String, String[]> params) {
+        Object sessionToken = SessionManager.getCurrentSession().getAttribute("sakai.csrf.token");
+
+	String[] fromParams = params.get("sakai_csrf_token");
+
+	if (fromParams == null || fromParams.length != 1) {
+	    return false;
+	}
+
+        if (sessionToken == null || !sessionToken.equals(fromParams[0])) {
+            return false;
+        }
+
+        return true;
+    }
+
 }

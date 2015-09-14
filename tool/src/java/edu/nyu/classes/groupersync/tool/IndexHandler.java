@@ -24,6 +24,7 @@ import org.sakaiproject.component.cover.ServerConfigurationService;
 import java.util.HashMap;
 import com.github.jknack.handlebars.Handlebars;
 import java.net.URL;
+import org.sakaiproject.tool.cover.SessionManager;
 
 public class IndexHandler extends BaseHandler {
 
@@ -71,6 +72,8 @@ public class IndexHandler extends BaseHandler {
 	    context.put("skinRepo", ServerConfigurationService.getString("skin.repo", ""));
 	    context.put("randomSakaiHeadStuff", request.getAttribute("sakai.html.head"));
 	    context.put("requiredSuffix", AddressFormatter.format(buildRequiredSuffix(site)));
+
+            context.put("csrfToken", SessionManager.getCurrentSession().getAttribute("sakai.csrf.token"));
 
 	    context.put("wholeSite", wholeSite);
 	    context.put("sections", sections);
