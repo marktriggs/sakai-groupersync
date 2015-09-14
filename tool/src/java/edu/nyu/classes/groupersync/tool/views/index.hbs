@@ -78,12 +78,17 @@
                         <input type="text" class="form-control groupId" maxlength=20 name="groupId" placeholder="Address of new group">
                         <span class="input-group-addon requiredSuffix">{{requiredSuffix}}</span>
                     </div>
-                    <small class="group-address-character-count text-muted">
-                        <span class="group-address-characters-remaining"></span> characters remaining
-                    </small>
+                    <div>
+                        <small class="group-address-character-count text-muted">
+                            <span class="group-address-characters-remaining"></span> characters remaining
+                        </small>
+                    </div>
+                    <div class="invalid-address-input" style="display: none">
+                        <small class="text-danger">Invalid address entered</small>
+                    </div>
                 </div>
 
-                <button type="submit" class="btn btn-primary">Submit</button>
+                <button type="submit" class="btn submit-btn btn-primary">Submit</button>
             </form>
         </div>
 

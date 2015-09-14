@@ -4,10 +4,14 @@
     "use strict";
 
     function AutoPopulateHandler(form, maxLength) {
+        this.form = form;
         this.descriptionInput = form.find('.description');
         this.addressInput = form.find('.groupId');
+        this.submit = form.find('.submit-btn');
+
         this.requiredSuffixLength = form.find('.requiredSuffix').text().split(/@/)[0].length;
         this.lastGeneratedValue = '';
+        this.invalid_char_regex = /[^a-zA-Z0-9_. ]/g;
         this.maxLength = 60;
 
         this.addressInput.attr('maxlength', this.calculateMaxLength());
@@ -28,18 +32,50 @@
         }
 
         this.lastGeneratedValue = this.descriptionInput.val().toLowerCase()
-            .replace(/[^a-zA-Z0-9_. ]/g, '')
-            .replace(/ +/g, '-')
+            .replace(this.invalid_char_regex, '')
+            .replace(/\s+/g, '-')
             .substring(0, this.calculateMaxLength());
 
         this.addressInput.val(this.lastGeneratedValue).trigger("change");
     };
 
 
+    AutoPopulateHandler.prototype.addressUpdated = function () {
+        var value = this.addressInput.val();
+
+        // Hyphens will match our invalid character regexp but they're actually
+        // OK since we put them in ourselves.
+        var noHyphens = value.replace(/-/g, '');
+
+        if (new RegExp(this.invalid_char_regex).test(noHyphens) || new RegExp(/\s/).test(noHyphens)) {
+            // Invalid
+            this.addressInput.closest('.form-group').addClass('has-error');
+            $('.invalid-address-input').show();
+            this.submit.prop('disabled', true);
+        } else {
+            // OK
+            this.addressInput.closest('.form-group').removeClass('has-error');
+            $('.invalid-address-input').hide();
+            this.submit.prop('disabled', false);
+        }
+    };
+
     AutoPopulateHandler.prototype.bindToEvents = function () {
         var self = this;
         this.descriptionInput.on('keyup change', function () {
             self.descriptionUpdated();
+        });
+
+        this.addressInput.on('keyup change', function () {
+            self.addressUpdated();
+        });
+
+        this.form.on('submit', function (e) {
+            // No submitting if the button was disabled.
+            if (self.submit.prop('disabled')) {
+                e.preventDefault();
+                return false;
+            }
         });
     };
 
