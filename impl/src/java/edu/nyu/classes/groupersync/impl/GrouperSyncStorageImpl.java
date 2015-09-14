@@ -200,6 +200,31 @@ public class GrouperSyncStorageImpl implements GrouperSyncStorage {
         }
     }
 
+
+    @Override
+    public void updateDescription(final String groupId, final String description) throws GrouperSyncException {
+        try {
+            DB.connection(new DBAction() {
+                public void execute(Connection connection) throws SQLException {
+                    PreparedStatement insert = connection.prepareStatement("update grouper_groups set description = ? where group_id = ?");
+
+                    insert.setString(1, description);
+                    insert.setString(2, groupId);
+
+                    insert.executeUpdate();
+                    insert.close();
+
+                    connection.commit();
+                }
+
+                ;
+            });
+        } catch (SQLException e) {
+            throw new GrouperSyncException("Failure while updating description", e);
+        }
+    }
+
+
     // FIXME: This is just some temporary scaffolding to test the sync process
     // prior to getting the UI up.  We'll delete this at some point.
     @Override

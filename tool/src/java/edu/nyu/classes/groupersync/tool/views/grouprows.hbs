@@ -1,15 +1,19 @@
-<tr class="group-container" data-sakai-group-id="{{this.sakaiGroupId}}">
-    <td>{{this}}</td>
-    <td>{{status}}</td>
+<tr class="group-container"
+    data-sakai-group-id="{{this.sakaiGroupId}}"
+    data-label="{{label}}"
+    data-sakai-group-title="{{this}}"
+    data-address="{{address}}">
+    <td><div>{{this}}</div>
+        <div><button class="btn btn-xs btn-default show-members-btn">Members</button></div>
+    </td>
     <td>
         {{#if this.availableForSync}}
             <button class="btn btn-xs btn-success create-group-btn">Create Google Group</button>
         {{/if}}
         {{#if this.markedForSync}}
-            <strong>{{address}}</strong><br>{{label}}
+            <button class="btn btn-xs btn-default edit-btn pull-right">Edit</button>
+            <div><strong>{{address}}</strong></div>
+            <div>{{label}}</div>
         {{/if}}
-    </td>
-    <td>
-        <button class="btn btn-xs btn-default show-members-btn">Members</button>
     </td>
 </tr>

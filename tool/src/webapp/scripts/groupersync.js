@@ -6,7 +6,7 @@
     function AutoPopulateHandler(form, maxLength) {
         this.form = form;
         this.descriptionInput = form.find('.description');
-        this.addressInput = form.find('.groupId');
+        this.addressInput = form.find('.address');
         this.submit = form.find('.submit-btn');
 
         this.requiredSuffixLength = form.find('.requiredSuffix').text().split(/@/)[0].length;
@@ -66,6 +66,8 @@
             self.descriptionUpdated();
         });
 
+        this.descriptionInput.trigger('change');
+
         this.addressInput.on('keyup change', function () {
             self.addressUpdated();
         });
@@ -100,6 +102,7 @@
         this.input = $input;
         this.countMessage = $countMessage;
 
+        $countMessage.show();
         this.bindToEvents();
         this.updateCountMessage();
     };
@@ -129,18 +132,19 @@
 (function (exports) {
     "use strict";
 
-    function CreateGroupModal(baseUrl, sakaiGroupId) {
-        this.sakaiGroupId = sakaiGroupId;
+    function CRUDModal(baseUrl) {
         this.baseUrl = baseUrl;
     }
 
 
-    CreateGroupModal.prototype.show = function () {
-        var template = $('#create-group-template');
+    CRUDModal.prototype.showCreateForm = function (groupContainer) {
+        var template = $('#crud-template');
         var form = $(template.html().trim());
+        var sakaiGroupId = groupContainer['sakaiGroupId'];
 
         form.find('.create-group-form').attr('action', this.baseUrl + 'create_group');
-        form.find('.sakaiGroupId').val(this.sakaiGroupId);
+        form.find('.sakaiGroupId').val(sakaiGroupId);
+        form.find(':input.description').val(groupContainer['sakaiGroupTitle']);
 
         $('#modal-area .modal-body').empty().append(form);
         $('#modal-area .modal-title').html('Create new group');
@@ -151,12 +155,36 @@
             form.find('.description').focus();
             new AutoPopulateHandler(form);
             new CharacterCountHandler(form.find(":input.description"), form.find(".description-character-count"));
-            new CharacterCountHandler(form.find(":input.groupId"), form.find(".group-address-character-count"));
+            new CharacterCountHandler(form.find(":input.address"), form.find(".group-address-character-count"));
         });
     };
 
 
-    exports.CreateGroupModal = CreateGroupModal;
+    CRUDModal.prototype.showEditForm = function (groupContainer) {
+        var template = $('#crud-template');
+        var form = $(template.html().trim());
+        var sakaiGroupId = groupContainer['sakaiGroupId'];
+
+        form.find('.create-group-form').attr('action', this.baseUrl + 'update_group');
+        form.find('.sakaiGroupId').val(sakaiGroupId);
+        form.find(':input.description').val(groupContainer['label']);
+
+        form.find(':input.address').closest('.input-group').removeClass('input-group')
+        form.find(':input.address').val(groupContainer['address']).prop('readonly', true);
+        form.find('.input-append').remove();
+
+        $('#modal-area .modal-body').empty().append(form);
+        $('#modal-area .modal-title').html('Edit group');
+        $('#modal-area').modal();
+
+        $('#modal-area').on('shown.bs.modal', function () {
+            resizeFrame();
+            form.find('.description').focus();
+            new CharacterCountHandler(form.find(":input.description"), form.find(".description-character-count"));
+        });
+    };
+
+    exports.CRUDModal = CRUDModal;
 }(this));
 
 
@@ -206,14 +234,13 @@
         this.bindToEvents();
     }
 
-    var groupFor = function(elt) {
-        var group = $(elt).closest('.group-container');
-        return group.data('sakai-group-id');
+    var dataFor = function (row) {
+        return $(row).closest('.group-container').data();
     };
 
-    GrouperSync.prototype.showMembers = function (elt) {
+    GrouperSync.prototype.showMembers = function (groupContainer) {
         var self = this;
-        var sakaiGroupId = groupFor(elt);
+        var sakaiGroupId = groupContainer['sakaiGroupId'];
 
         $.ajax({
             method: 'GET',
@@ -232,12 +259,17 @@
         var self = this;
 
         $(document).on('click', '.show-members-btn', function () {
-            self.showMembers(this);
+            self.showMembers(dataFor(this));
         });
 
         $(document).on('click', '.create-group-btn', function () {
-            new CreateGroupModal(self.baseUrl, groupFor(this)).show();
+            new CRUDModal(self.baseUrl).showCreateForm(dataFor(this));
         });
+
+        $(document).on('click', '.edit-btn', function () {
+            new CRUDModal(self.baseUrl).showEditForm(dataFor(this));
+        });
+
 
     };
 

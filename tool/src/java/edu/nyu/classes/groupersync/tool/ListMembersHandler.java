@@ -23,7 +23,6 @@ import java.util.HashMap;
 
 public class ListMembersHandler extends BaseHandler {
 
-    @Override
     public void handle(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         response.setHeader("Content-Type", "text/json");
 	JSONArray result = new JSONArray();

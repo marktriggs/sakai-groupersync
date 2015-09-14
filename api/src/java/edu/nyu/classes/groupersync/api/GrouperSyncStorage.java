@@ -20,4 +20,6 @@ public interface GrouperSyncStorage {
     void markGroupForSync(final String groupId, final String sakaiGroupId, final String description) throws GrouperSyncException;
 
     void prepopulateGroupsBasedOnThisOneWeirdTrick() throws GrouperSyncException;
+
+    void updateDescription(final String groupId, final String description) throws GrouperSyncException;
 }

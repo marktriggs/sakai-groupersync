@@ -15,15 +15,16 @@ import edu.nyu.classes.groupersync.api.GrouperSyncService;
 import org.sakaiproject.tool.cover.SessionManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.sakaiproject.site.api.Site;
+import edu.nyu.classes.groupersync.api.GroupInfo;
 
 
-public class CreateGroupHandler extends BaseHandler {
+public class CrudHandler extends BaseHandler {
 
-    private static final Log log = LogFactory.getLog(CreateGroupHandler.class);
+    private static final Log log = LogFactory.getLog(CrudHandler.class);
 
 
-    @Override
-    public void handle(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+    public void handleCreate(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 	try {
 	    if (!checkCSRFToken(request.getParameterMap())) {
 		throw new ServletException("CSRF token check failed");
@@ -44,17 +45,7 @@ public class CreateGroupHandler extends BaseHandler {
 		throw new ServletException("Invalid group provided!");
 	    }
 
-	    if (siteId.equals(sakaiGroupId)) {
-		// Creating the 'all' users link.
-	    } else {
-		Group group = site.getGroup(sakaiGroupId);
-
-		if (group == null) {
-		    throw new ServletException("Group not found");
-		}
-
-		sakaiGroupId = group.getId();
-	    }
+	    sakaiGroupId = findMatchingGroupId(siteId, sakaiGroupId);
 
 	    grouper.markGroupForSync(groupId + requiredSuffix,
 		    sakaiGroupId,
@@ -66,6 +57,48 @@ public class CreateGroupHandler extends BaseHandler {
 	    throw new ServletException("Failed to find site", e);
 	} catch (GrouperSyncException e) {
 	    response.sendRedirect(determineBaseURL().toString() + "?error=group_in_use");
+	}
+    }
+
+
+    public void handleUpdate(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+	try {
+	    if (!checkCSRFToken(request.getParameterMap())) {
+		throw new ServletException("CSRF token check failed");
+	    }
+
+	    GrouperSyncService grouper = getGrouperSyncService();
+	    String siteId = ToolManager.getCurrentPlacement().getContext();
+
+	    String sakaiGroupId = request.getParameter("sakaiGroupId");
+	    String description = request.getParameter("description");
+
+	    GroupInfo info = grouper.getGroupInfo(findMatchingGroupId(siteId, sakaiGroupId));
+
+	    grouper.updateDescription(info.getGrouperId(), description);
+
+	    response.sendRedirect(determineBaseURL().toString() + "?success=group_updated");
+	} catch (IdUnusedException e) {
+	    throw new ServletException("Failed to find site", e);
+	} catch (GrouperSyncException e) {
+	    response.sendRedirect(determineBaseURL().toString() + "?error=updated_failed");
+	}
+    }
+
+
+    private String findMatchingGroupId(String siteId, String sakaiGroupId) throws ServletException, IdUnusedException {
+	if (siteId.equals(sakaiGroupId)) {
+	    // Creating the 'all' users link.
+	    return siteId;
+	} else {
+	    Site site = SiteService.getSite(siteId);
+	    Group group = site.getGroup(sakaiGroupId);
+
+	    if (group == null) {
+		throw new ServletException("Group not found");
+	    }
+
+	    return group.getId();
 	}
     }
 

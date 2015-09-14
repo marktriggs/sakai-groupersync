@@ -42,7 +42,9 @@ public class GrouperSyncServlet extends HttpServlet {
         checkAccessControl();
 
         if (Objects.toString(request.getPathInfo()).indexOf("/create_group") >= 0) {
-	    new CreateGroupHandler().handle(request, response);
+	    new CrudHandler().handleCreate(request, response);
+        } else if (Objects.toString(request.getPathInfo()).indexOf("/update_group") >= 0) {
+	    new CrudHandler().handleUpdate(request, response);
         } else {
             throw new ServletException("Unrecognized request");
         }

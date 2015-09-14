@@ -1,5 +1,6 @@
 package edu.nyu.classes.groupersync.tool;
 
+import org.sakaiproject.site.api.Group;
 import edu.nyu.classes.groupersync.api.GroupInfo;
 import edu.nyu.classes.groupersync.api.GrouperSyncException;
 import edu.nyu.classes.groupersync.api.GrouperSyncService;
@@ -15,8 +16,8 @@ class GroupView {
 
     private GroupInfo groupInfo;
 
-    public GroupView(AuthzGroup group, GrouperSyncService grouper) {
-        this(group, group.toString(), grouper);
+    public GroupView(Group group, GrouperSyncService grouper) {
+        this(group, group.getTitle(), grouper);
     }
 
     public GroupView(AuthzGroup group, String displayString, GrouperSyncService grouper) {
@@ -27,7 +28,7 @@ class GroupView {
 
         // One query per group, but we're expecting the number of groups to be small.
         try {
-            this.groupInfo = grouper.getGroupInfo(group);
+            this.groupInfo = grouper.getGroupInfo(group.getId());
 
             if (groupInfo == null) {
                 // Null object

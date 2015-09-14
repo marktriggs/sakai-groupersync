@@ -4,15 +4,14 @@ import edu.nyu.classes.groupersync.api.GroupInfo;
 import edu.nyu.classes.groupersync.api.GrouperSyncException;
 import edu.nyu.classes.groupersync.api.GrouperSyncService;
 import edu.nyu.classes.groupersync.api.GrouperSyncStorage;
-import org.sakaiproject.authz.api.AuthzGroup;
 
 public class GrouperSyncServiceImpl implements GrouperSyncService {
 
     @Override
-    public GroupInfo getGroupInfo(AuthzGroup group) throws GrouperSyncException {
+    public GroupInfo getGroupInfo(String sakaiGroupId) throws GrouperSyncException {
         GrouperSyncStorage storage = getStorage();
 
-        return storage.getGroupInfo(group.getId());
+        return storage.getGroupInfo(sakaiGroupId);
     }
 
     @Override
@@ -23,6 +22,11 @@ public class GrouperSyncServiceImpl implements GrouperSyncService {
     @Override
     public void markGroupForSync(final String groupId, final String sakaiGroupId, final String description) throws GrouperSyncException {
         getStorage().markGroupForSync(groupId, sakaiGroupId, description);
+    }
+
+    @Override
+    public void updateDescription(final String groupId, final String description) throws GrouperSyncException {
+        getStorage().updateDescription(groupId, description);
     }
 
     @Override

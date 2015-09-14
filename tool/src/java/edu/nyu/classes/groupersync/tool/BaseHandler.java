@@ -46,6 +46,4 @@ abstract class BaseHandler {
             throw new ServletException("Couldn't determine tool URL", e);
         }
     }
-
-    abstract public void handle(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException;
 }

@@ -1,5 +1,6 @@
 package edu.nyu.classes.groupersync.tool;
 
+import org.sakaiproject.site.api.Group;
 import java.io.IOException;
 import com.github.jknack.handlebars.Handlebars;
 import com.github.jknack.handlebars.Helper;
@@ -30,7 +31,9 @@ public class IndexHandler extends BaseHandler {
 
     enum MessageStrings {
 	GROUP_IN_USE("That group name is taken"),
-	GROUP_CREATED("Group successfully created");
+	GROUP_CREATED("Group successfully created"),
+	GROUP_UPDATED("Group successfully updated"),
+	UPDATE_FAILED("Group update could not be completed");
 
 	private String msg;
 
@@ -44,7 +47,6 @@ public class IndexHandler extends BaseHandler {
     }
 
 
-    @Override
     public void handle(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         response.setHeader("Content-Type", "text/html");
 
@@ -59,11 +61,13 @@ public class IndexHandler extends BaseHandler {
 	    Collection<GroupView> adhocGroups = new ArrayList<GroupView>();
 
 	    wholeSite.add(new GroupView(site, "All site members", grouper));
-	    for (AuthzGroup group : site.getGroups()) {
+	    for (Group group : site.getGroups()) {
+		GroupView groupView = new GroupView(group, grouper);
+
 		if (group.getProviderGroupId() == null) {
-		    adhocGroups.add(new GroupView(group, grouper));
+		    adhocGroups.add(groupView);
 		} else {
-		    sections.add(new GroupView(group, grouper));
+		    sections.add(groupView);
 		}
 	    }
 
