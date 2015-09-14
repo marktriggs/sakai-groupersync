@@ -31,7 +31,7 @@
                     if(updown==='shrink') {
                         var clientH = document.body.clientHeight;
                     } else {
-                        var clientH = document.body.clientHeight + 30;
+                        var clientH = $(parent.document).find('.portletMainWrap').height();
                     }
                     $( frame ).height( clientH );
                 } 

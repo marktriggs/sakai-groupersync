@@ -70,6 +70,7 @@
         $('#modal-area').modal();
 
         $('#modal-area').on('shown.bs.modal', function () {
+            resizeFrame();
             form.find('.description').focus();
             new AutoPopulateHandler(form);
         });
@@ -106,6 +107,8 @@
         $('#modal-area .modal-body').empty().append(container);
         $('#modal-area .modal-title').html('Member list');
         $('#modal-area').modal();
+
+        $('#modal-area').on('shown.bs.modal', resizeFrame);
     };
 
 
