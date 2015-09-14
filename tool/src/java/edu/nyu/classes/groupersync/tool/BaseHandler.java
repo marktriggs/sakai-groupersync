@@ -22,7 +22,7 @@ abstract class BaseHandler {
             termEid = "prj";
         }
 
-        return ":" + termEid + ":classes:" + site.getId().substring(0, 4);
+        return ":" + termEid + ":" + site.getId().substring(0, 4);
     }
 
 
