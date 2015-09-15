@@ -8,6 +8,8 @@ public interface GrouperSyncService {
 
     void updateDescription(final String groupId, final String description) throws GrouperSyncException;
 
+    void deleteGroup(final String groupId) throws GrouperSyncException;
+
     GrouperSyncStorage getStorage();
 
     void init();

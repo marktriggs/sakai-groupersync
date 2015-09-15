@@ -19,5 +19,7 @@ public interface GrouperSyncStorage {
 
     void markGroupForSync(final String groupId, final String sakaiGroupId, final String description) throws GrouperSyncException;
 
+    void deleteGroup(final String groupId) throws GrouperSyncException;
+
     void updateDescription(final String groupId, final String description) throws GrouperSyncException;
 }

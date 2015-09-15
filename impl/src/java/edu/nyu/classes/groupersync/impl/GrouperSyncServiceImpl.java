@@ -30,6 +30,11 @@ public class GrouperSyncServiceImpl implements GrouperSyncService {
     }
 
     @Override
+    public void deleteGroup(final String groupId) throws GrouperSyncException {
+        getStorage().deleteGroup(groupId);
+    }
+
+    @Override
     public void init() {
     }
 

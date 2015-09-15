@@ -216,11 +216,34 @@ public class GrouperSyncStorageImpl implements GrouperSyncStorage {
 
                     connection.commit();
                 }
-
-                ;
             });
         } catch (SQLException e) {
             throw new GrouperSyncException("Failure while updating description", e);
+        }
+    }
+
+
+    public void deleteGroup(final String groupId) throws GrouperSyncException {
+        try {
+            DB.connection(new DBAction() {
+                public void execute(Connection connection) throws SQLException {
+                    // Mark as deleted
+                    PreparedStatement insert = connection.prepareStatement("update grouper_groups set deleted = 1 where group_id = ?");
+                    insert.setString(1, groupId);
+                    insert.executeUpdate();
+                    insert.close();
+
+                    // And drop all members
+                    PreparedStatement dropMembers = connection.prepareStatement("delete from grouper_group_users where group_id = ?");
+                    dropMembers.setString(1, groupId);
+                    dropMembers.executeUpdate();
+                    dropMembers.close();
+
+                    connection.commit();
+                }
+            });
+        } catch (SQLException e) {
+            throw new GrouperSyncException("Failure while deleting group", e);
         }
     }
 

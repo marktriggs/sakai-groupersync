@@ -1,6 +1,6 @@
 create table grouper_status (setting varchar(255) PRIMARY KEY, value varchar(255));
 
-create table grouper_groups (group_id varchar(255) PRIMARY KEY, sakai_group_id varchar(255), description varchar(512));
+create table grouper_groups (group_id varchar(255) PRIMARY KEY, sakai_group_id varchar(255), description varchar(512), deleted int default 0);
 create index grouper_groups_sakai_id on grouper_groups (sakai_group_id);
 
 create table grouper_group_users (group_id varchar(255), netid varchar(255), role varchar(30),
