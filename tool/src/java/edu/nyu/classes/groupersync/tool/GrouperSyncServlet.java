@@ -42,9 +42,11 @@ public class GrouperSyncServlet extends HttpServlet {
         checkAccessControl();
 
         if (Objects.toString(request.getPathInfo()).indexOf("/create_group") >= 0) {
-	    new CrudHandler().handleCreate(request, response);
+            new CrudHandler().handleCreate(request, response);
         } else if (Objects.toString(request.getPathInfo()).indexOf("/update_group") >= 0) {
-	    new CrudHandler().handleUpdate(request, response);
+            new CrudHandler().handleUpdate(request, response);
+        } else if (Objects.toString(request.getPathInfo()).indexOf("/delete_group") >= 0) {
+            new CrudHandler().handleDelete(request, response);
         } else {
             throw new ServletException("Unrecognized request");
         }
@@ -53,11 +55,13 @@ public class GrouperSyncServlet extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         checkAccessControl();
 
-	if (Objects.toString(request.getPathInfo()).indexOf("/members") >= 0) {
-	    new ListMembersHandler().handle(request, response);
-	} else {
-	    new IndexHandler().handle(request, response);
-	}
+        if (Objects.toString(request.getPathInfo()).indexOf("/members") >= 0) {
+            new ListMembersHandler().handle(request, response);
+        } else if (Objects.toString(request.getPathInfo()).indexOf("/check_group") >= 0) {
+            new CheckGroupHandler().handle(request, response);
+        } else {
+            new IndexHandler().handle(request, response);
+        }
     }
 
 

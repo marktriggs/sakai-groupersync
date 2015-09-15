@@ -38,3 +38,6 @@ body {
     overflow: hidden;
 }
 
+small.text-danger {
+    font-weight: bold;
+}

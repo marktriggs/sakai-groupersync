@@ -21,5 +21,7 @@ public interface GrouperSyncStorage {
 
     void deleteGroup(final String groupId) throws GrouperSyncException;
 
+    boolean isGroupAvailable(final String groupId) throws GrouperSyncException;
+
     void updateDescription(final String groupId, final String description) throws GrouperSyncException;
 }

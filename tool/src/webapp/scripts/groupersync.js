@@ -1,9 +1,8 @@
 // Auto populate address based on description
-// FIXME: Pass this max length in from the Java code somehow.
 (function (exports) {
     "use strict";
 
-    function AutoPopulateHandler(form, maxLength) {
+    function AutoPopulateHandler(form, config) {
         this.form = form;
         this.descriptionInput = form.find('.description');
         this.addressInput = form.find('.address');
@@ -11,8 +10,9 @@
 
         this.requiredSuffixLength = form.find('.requiredSuffix').text().split(/@/)[0].length;
         this.lastGeneratedValue = '';
-        this.invalid_char_regex = /[^a-zA-Z0-9_. ]/g;
-        this.maxLength = 60;
+        this.invalid_char_regex = new RegExp("[^" + config.addressAllowedCharacters + config.whitespaceReplacementCharacter + "]", 'g');
+        this.whitespace_replacement_char = config.whitespaceReplacementCharacter;
+        this.maxLength = config.maxAddressLength;
 
         this.addressInput.attr('maxlength', this.calculateMaxLength());
 
@@ -32,8 +32,8 @@
         }
 
         this.lastGeneratedValue = this.descriptionInput.val().toLowerCase()
+            .replace(/\s+/g, this.whitespace_replacement_char)
             .replace(this.invalid_char_regex, '')
-            .replace(/\s+/g, '-')
             .substring(0, this.calculateMaxLength());
 
         this.addressInput.val(this.lastGeneratedValue).trigger("change");
@@ -45,7 +45,7 @@
 
         // Hyphens will match our invalid character regexp but they're actually
         // OK since we put them in ourselves.
-        var noHyphens = value.replace(/-/g, '');
+        var noHyphens = value.replace(new RegExp(this.whitespace_replacement_char, 'g'), '');
 
         if (new RegExp(this.invalid_char_regex).test(noHyphens) || new RegExp(/\s/).test(noHyphens)) {
             // Invalid
@@ -101,6 +101,7 @@
     function CharacterCountHandler($input, $countMessage) {
         this.input = $input;
         this.countMessage = $countMessage;
+        this.config = config;
 
         $countMessage.show();
         this.bindToEvents();
@@ -132,55 +133,92 @@
 (function (exports) {
     "use strict";
 
-    function CRUDModal(baseUrl) {
+    function CRUDModal(baseUrl, config) {
         this.baseUrl = baseUrl;
+        this.config = config;
     }
 
 
     CRUDModal.prototype.showCreateForm = function (groupContainer) {
-        var template = $('#crud-template');
-        var form = $(template.html().trim());
+        var self = this;
+        var template = $($('#crud-template').html().trim());
         var sakaiGroupId = groupContainer['sakaiGroupId'];
 
-        form.find('.create-group-form').attr('action', this.baseUrl + 'create_group');
-        form.find('.sakaiGroupId').val(sakaiGroupId);
-        form.find(':input.description').val(groupContainer['sakaiGroupTitle']);
+        template.find('.create-group-form').attr('action', this.baseUrl + 'create_group');
+        template.find('.sakaiGroupId').val(sakaiGroupId);
+        template.find(':input.description').val(groupContainer['sakaiGroupTitle'].substring(0, this.config.maxDescriptionLength));
 
-        $('#modal-area .modal-body').empty().append(form);
+        // Quick check to see if the group is OK prior to submitting.
+        template.find('.create-group-form .submit-btn').on('click', function () {
+            var address = template.find(":input.address");
+
+            address.closest('.form-group').removeClass('has-error');
+            $('.address-in-use').hide();
+
+            $.ajax({
+                method: 'GET',
+                url: self.baseUrl + 'check_group',
+                data: {
+                    groupId: address.val()
+                },
+                success: function () {
+                    template.find('.create-group-form').submit();
+                },
+                error: function () {
+                    address.closest('.form-group').addClass('has-error');
+                    $('.address-in-use').show();
+                }
+            });
+
+            return false;
+        });
+
+
+        $('#modal-area .modal-body').empty().append(template);
         $('#modal-area .modal-title').html('Create new group');
         $('#modal-area').modal();
 
         $('#modal-area').on('shown.bs.modal', function () {
             resizeFrame();
-            form.find('.description').focus();
-            new AutoPopulateHandler(form);
-            new CharacterCountHandler(form.find(":input.description"), form.find(".description-character-count"));
-            new CharacterCountHandler(form.find(":input.address"), form.find(".group-address-character-count"));
+            template.find('.description').focus();
+            new AutoPopulateHandler(template, self.config);
+            new CharacterCountHandler(template.find(":input.description"), template.find(".description-character-count"));
+            new CharacterCountHandler(template.find(":input.address"), template.find(".group-address-character-count"));
         });
     };
 
 
+    CRUDModal.prototype.showDeleteButton = function (template, groupContainer) {
+        var self = this;
+
+        template.find('.delete-group-form').attr('action', this.baseUrl + 'delete_group');
+        template.find('.delete-group-form .sakaiGroupId').val(groupContainer['sakaiGroupId']);
+
+        template.find('.delete-group-form').show();
+    };
+
+
     CRUDModal.prototype.showEditForm = function (groupContainer) {
-        var template = $('#crud-template');
-        var form = $(template.html().trim());
-        var sakaiGroupId = groupContainer['sakaiGroupId'];
+        var template = $($('#crud-template').html().trim());
 
-        form.find('.create-group-form').attr('action', this.baseUrl + 'update_group');
-        form.find('.sakaiGroupId').val(sakaiGroupId);
-        form.find(':input.description').val(groupContainer['label']);
+        template.find('.create-group-form').attr('action', this.baseUrl + 'update_group');
+        template.find('.create-group-form .sakaiGroupId').val(groupContainer['sakaiGroupId']);
+        template.find('.create-group-form :input.description').val(groupContainer['label']);
 
-        form.find(':input.address').closest('.input-group').removeClass('input-group')
-        form.find(':input.address').val(groupContainer['address']).prop('readonly', true);
-        form.find('.input-append').remove();
+        template.find('.create-group-form :input.address').closest('.input-group').removeClass('input-group')
+        template.find('.create-group-form :input.address').val(groupContainer['address']).prop('readonly', true);
+        template.find('.create-group-form .input-append').remove();
 
-        $('#modal-area .modal-body').empty().append(form);
+        this.showDeleteButton(template, groupContainer);
+
+        $('#modal-area .modal-body').empty().append(template);
         $('#modal-area .modal-title').html('Edit group');
         $('#modal-area').modal();
 
         $('#modal-area').on('shown.bs.modal', function () {
             resizeFrame();
-            form.find('.description').focus();
-            new CharacterCountHandler(form.find(":input.description"), form.find(".description-character-count"));
+            template.find('.description').focus();
+            new CharacterCountHandler(template.find(":input.description"), template.find(".description-character-count"));
         });
     };
 
@@ -229,9 +267,10 @@
 (function (exports) {
     "use strict";
 
-    function GrouperSync(baseUrl) {
+    function GrouperSync(baseUrl, config) {
         this.baseUrl = baseUrl;
         this.bindToEvents();
+        this.config = config;
     }
 
     var dataFor = function (row) {
@@ -263,14 +302,12 @@
         });
 
         $(document).on('click', '.create-group-btn', function () {
-            new CRUDModal(self.baseUrl).showCreateForm(dataFor(this));
+            new CRUDModal(self.baseUrl, config).showCreateForm(dataFor(this));
         });
 
         $(document).on('click', '.edit-btn', function () {
-            new CRUDModal(self.baseUrl).showEditForm(dataFor(this));
+            new CRUDModal(self.baseUrl, config).showEditForm(dataFor(this));
         });
-
-
     };
 
 

@@ -19,7 +19,13 @@
         <script type="text/javascript" src="/groupersync-tool/scripts/bootstrap.min.js"></script>
         <script type="text/javascript" src="/groupersync-tool/scripts/groupersync.js"></script>
         <script>
-         var grouper = new GrouperSync('{{{baseUrl}}}');
+         var config = {
+             maxDescriptionLength: {{{maxDescriptionLength}}},
+             maxAddressLength: {{{maxAddressLength}}},
+             addressAllowedCharacters: '{{{addressAllowedCharacters}}}',
+             whitespaceReplacementCharacter: '{{{whitespaceReplacementCharacter}}}',
+         };
+         var grouper = new GrouperSync('{{{baseUrl}}}', config);
         </script>
         <script>
             function resizeFrame(updown) 

@@ -10,6 +10,8 @@ public interface GrouperSyncService {
 
     void deleteGroup(final String groupId) throws GrouperSyncException;
 
+    boolean isGroupAvailable(final String groupId) throws GrouperSyncException;
+
     GrouperSyncStorage getStorage();
 
     void init();

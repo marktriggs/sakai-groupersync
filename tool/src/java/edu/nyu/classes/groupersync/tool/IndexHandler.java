@@ -30,20 +30,22 @@ import org.sakaiproject.tool.cover.SessionManager;
 public class IndexHandler extends BaseHandler {
 
     enum MessageStrings {
-	GROUP_IN_USE("That group name is taken"),
-	GROUP_CREATED("Group successfully created"),
-	GROUP_UPDATED("Group successfully updated"),
-	UPDATE_FAILED("Group update could not be completed");
+        GROUP_IN_USE("That group name is taken.  Please choose another."),
+        GROUP_CREATED("Group successfully created"),
+        GROUP_UPDATED("Group successfully updated"),
+        UPDATE_FAILED("Group update could not be completed"),
+        GROUP_DELETED("Group successfully deleted"),
+        DELETE_FAILED("Group delete could not be completed");
 
-	private String msg;
+        private String msg;
 
-	MessageStrings(String msg) {
-	    this.msg = msg;
-	}
+        MessageStrings(String msg) {
+            this.msg = msg;
+        }
 
-	public String toString() {
-	    return msg;
-	}
+        public String toString() {
+            return msg;
+        }
     }
 
 
@@ -53,53 +55,59 @@ public class IndexHandler extends BaseHandler {
         GrouperSyncService grouper = getGrouperSyncService();
         String siteId = ToolManager.getCurrentPlacement().getContext();
 
-	try {
-	    Site site = SiteService.getSite(siteId);
+        try {
+            Site site = SiteService.getSite(siteId);
 
-	    Collection<GroupView> wholeSite = new ArrayList<GroupView>();
-	    Collection<GroupView> sections = new ArrayList<GroupView>();
-	    Collection<GroupView> adhocGroups = new ArrayList<GroupView>();
+            Collection<GroupView> wholeSite = new ArrayList<GroupView>();
+            Collection<GroupView> sections = new ArrayList<GroupView>();
+            Collection<GroupView> adhocGroups = new ArrayList<GroupView>();
 
-	    wholeSite.add(new GroupView(site, "All site members", grouper));
-	    for (Group group : site.getGroups()) {
-		GroupView groupView = new GroupView(group, grouper);
+            wholeSite.add(new GroupView(site, "All site members", grouper));
+            for (Group group : site.getGroups()) {
+                GroupView groupView = new GroupView(group, grouper);
 
-		if (group.getProviderGroupId() == null) {
-		    adhocGroups.add(groupView);
-		} else {
-		    sections.add(groupView);
-		}
-	    }
+                if (group.getProviderGroupId() == null) {
+                    adhocGroups.add(groupView);
+                } else {
+                    sections.add(groupView);
+                }
+            }
 
-	    Map<String, Object> context = new HashMap<String, Object>();
-	    context.put("baseUrl", determineBaseURL());
-	    context.put("skinRepo", ServerConfigurationService.getString("skin.repo", ""));
-	    context.put("randomSakaiHeadStuff", request.getAttribute("sakai.html.head"));
-	    context.put("requiredSuffix", AddressFormatter.format(buildRequiredSuffix(site)));
+            Map<String, Object> context = new HashMap<String, Object>();
+            context.put("baseUrl", determineBaseURL());
+            context.put("skinRepo", Configuration.getSkinRepo());
+            context.put("randomSakaiHeadStuff", request.getAttribute("sakai.html.head"));
+            context.put("requiredSuffix", AddressFormatter.format(buildRequiredSuffix(site)));
 
             context.put("csrfToken", SessionManager.getCurrentSession().getAttribute("sakai.csrf.token"));
 
-	    context.put("wholeSite", wholeSite);
-	    context.put("sections", sections);
-	    context.put("adhocGroups", adhocGroups);
+            context.put("wholeSite", wholeSite);
+            context.put("sections", sections);
+            context.put("adhocGroups", adhocGroups);
 
-	    context.put("subpage", "index");
+	    // Configuration bits we need
+	    context.put("maxDescriptionLength", Configuration.getMaxDescriptionLength());
+	    context.put("maxAddressLength", Configuration.getMaxAddressLength());
+	    context.put("addressAllowedCharacters", Configuration.getAddressAllowedCharacters());
+	    context.put("whitespaceReplacementCharacter", Configuration.getWhitespaceReplacementCharacter());
 
-	    if (request.getParameter("error") != null) {
-		context.put("error", MessageStrings.valueOf(request.getParameter("error").toUpperCase()));
-	    }
+            context.put("subpage", "index");
 
-	    if (request.getParameter("success") != null) {
-		context.put("success", MessageStrings.valueOf(request.getParameter("success").toUpperCase()));
-	    }
+            if (request.getParameter("error") != null) {
+                context.put("error", MessageStrings.valueOf(request.getParameter("error").toUpperCase()));
+            }
+
+            if (request.getParameter("success") != null) {
+                context.put("success", MessageStrings.valueOf(request.getParameter("success").toUpperCase()));
+            }
 
 
-	    Handlebars handlebars = loadHandlebars();
-	    Template template = handlebars.compile("edu/nyu/classes/groupersync/tool/views/layout");
-	    response.getWriter().write(template.apply(context));
-	} catch (IdUnusedException e) {
-	    throw new ServletException("Couldn't find site", e);
-	}
+            Handlebars handlebars = loadHandlebars();
+            Template template = handlebars.compile("edu/nyu/classes/groupersync/tool/views/layout");
+            response.getWriter().write(template.apply(context));
+        } catch (IdUnusedException e) {
+            throw new ServletException("Couldn't find site", e);
+        }
     }
 
 

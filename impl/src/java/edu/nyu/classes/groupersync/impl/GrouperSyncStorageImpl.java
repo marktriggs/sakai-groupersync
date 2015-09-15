@@ -27,7 +27,7 @@ public class GrouperSyncStorageImpl implements GrouperSyncStorage {
         try {
             DB.connection(new DBAction() {
                 public void execute(Connection connection) throws SQLException {
-                    PreparedStatement ps = connection.prepareStatement("select group_id, sakai_group_id, description from grouper_groups where sakai_group_id = ?");
+                    PreparedStatement ps = connection.prepareStatement("select group_id, sakai_group_id, description from grouper_groups where sakai_group_id = ? AND deleted != 1");
                     ps.setString(1, sakaiGroupId);
 
                     ResultSet rs = ps.executeQuery();
@@ -141,8 +141,6 @@ public class GrouperSyncStorageImpl implements GrouperSyncStorage {
                     rs.close();
                     ps.close();
                 }
-
-                ;
             });
         } catch (SQLException e) {
             throw new GrouperSyncException("Failure when getting job last_run_time", e);
@@ -223,6 +221,35 @@ public class GrouperSyncStorageImpl implements GrouperSyncStorage {
     }
 
 
+    @Override
+    public boolean isGroupAvailable(final String groupId) throws GrouperSyncException {
+        final boolean[] result = new boolean[1];
+
+        try {
+            DB.connection(new DBAction() {
+                public void execute(Connection connection) throws SQLException {
+                    // Mark as deleted
+                    PreparedStatement ps = connection.prepareStatement("select count(1) from grouper_groups where group_id = ?");
+                    ps.setString(1, groupId);
+                    ResultSet rs = ps.executeQuery();
+
+                    if (rs.next()) {
+                        result[0] = (rs.getInt(1) == 0);
+                    }
+
+                    rs.close();
+                    ps.close();
+                }
+            });
+        } catch (SQLException e) {
+            throw new GrouperSyncException("Failure while checking group availability", e);
+        }
+
+        return result[0];
+    }
+
+
+    @Override
     public void deleteGroup(final String groupId) throws GrouperSyncException {
         try {
             DB.connection(new DBAction() {

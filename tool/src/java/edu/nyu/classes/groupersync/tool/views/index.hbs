@@ -62,12 +62,12 @@
         <div class="create-group-container">
             <form class="create-group-form" method="POST">
 
-                <input type="hidden" name="sakai_csrf_token" value="{{csrfToken}}" />
+                <input type="hidden" class="sakaiCSRFToken" name="sakai_csrf_token" value="{{csrfToken}}" />
                 <input type="hidden" class="sakaiGroupId" name="sakaiGroupId" />
 
                 <div class="form-group">
                     <label for="group-description">Group description</label>
-                    <input required="true" type="text" class="form-control description" maxlength=70 name="description" placeholder="Description of new group">
+                    <input required="true" type="text" class="form-control description" maxlength={{{maxDescriptionLength}}} name="description" placeholder="Description of new group">
                     <div>
                         <small style="display: none" class="description-character-count text-muted">
                             <span class="characters-remaining"></span> characters remaining
@@ -92,9 +92,19 @@
                     <div class="invalid-address-input" style="display: none">
                         <small class="text-danger">Invalid address entered</small>
                     </div>
+                    <div class="address-in-use" style="display: none">
+                        <small class="text-danger">That address already in use.  Please choose another!</small>
+                    </div>
                 </div>
 
                 <button type="submit" class="btn submit-btn btn-primary">Submit</button>
+            </form>
+            <!-- Delete button -->
+            <form style="display: none" class="delete-group-form" method="POST">
+                <input type="hidden" class="sakaiCSRFToken" name="sakai_csrf_token" value="{{csrfToken}}" />
+                <input type="hidden" class="sakaiGroupId" name="sakaiGroupId" />
+
+                <button type="submit" class="btn delete-btn btn-danger pull-right">Delete group</button>
             </form>
         </div>
 

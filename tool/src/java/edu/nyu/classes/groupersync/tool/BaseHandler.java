@@ -41,7 +41,7 @@ abstract class BaseHandler {
         String toolId = ToolManager.getCurrentPlacement().getId();
 
         try {
-            return new URL(ServerConfigurationService.getPortalUrl() + "/tool/" + toolId + "/");
+            return new URL(Configuration.getPortalUrl() + "/tool/" + toolId + "/");
         } catch (MalformedURLException e) {
             throw new ServletException("Couldn't determine tool URL", e);
         }

@@ -35,6 +35,11 @@ public class GrouperSyncServiceImpl implements GrouperSyncService {
     }
 
     @Override
+    public boolean isGroupAvailable(final String groupId) throws GrouperSyncException {
+        return getStorage().isGroupAvailable(groupId);
+    }
+
+    @Override
     public void init() {
     }
 
