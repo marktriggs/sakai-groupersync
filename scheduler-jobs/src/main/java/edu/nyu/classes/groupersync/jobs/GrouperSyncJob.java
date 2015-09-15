@@ -133,8 +133,6 @@ public class GrouperSyncJob implements StatefulJob {
 
             GrouperSyncStorage storage = grouper.getStorage();
 
-            storage.prepopulateGroupsBasedOnThisOneWeirdTrick();
-
             Date now = new Date();
             Date previousTime = storage.getLastRunDate();
 

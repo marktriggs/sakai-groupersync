@@ -225,54 +225,6 @@ public class GrouperSyncStorageImpl implements GrouperSyncStorage {
     }
 
 
-    // FIXME: This is just some temporary scaffolding to test the sync process
-    // prior to getting the UI up.  We'll delete this at some point.
-    @Override
-    public void prepopulateGroupsBasedOnThisOneWeirdTrick() throws GrouperSyncException {
-        try {
-            DB.connection(new DBAction() {
-                public void execute(Connection connection) throws SQLException {
-                    PreparedStatement ps = connection.prepareStatement("select sr.realm_id" +
-                            " from sakai_realm sr" +
-                            " inner join sakai_realm_rl_gr srrg on srrg.realm_key = sr.realm_key" +
-                            " where srrg.user_id = (select user_id from sakai_user_id_map where eid = 'grouper_sync')");
-
-                    ResultSet rs = ps.executeQuery();
-
-                    while (rs.next()) {
-                        PreparedStatement insert = connection.prepareStatement("insert into grouper_groups (group_id, sakai_group_id, description) values (?, ?, ?)");
-
-                        String groupId = rs.getString(1);
-                        if (groupId.lastIndexOf("/") >= 0) {
-                            groupId = groupId.substring(groupId.lastIndexOf("/") + 1);
-                        }
-
-                        insert.setString(1, "this-is-my-test-group:fa14:classes:" + groupId.substring(0, 4));
-                        insert.setString(2, groupId);
-                        insert.setString(3, groupId);
-
-                        // This might fail for groups we've already handled, but that's OK.
-                        try {
-                            insert.executeUpdate();
-                        } catch (SQLException e) {
-                        }
-                        insert.close();
-                    }
-
-                    rs.close();
-                    ps.close();
-
-                    connection.commit();
-                }
-
-                ;
-            });
-        } catch (SQLException e) {
-            throw new GrouperSyncException("Failure while prepopulating groups", e);
-        }
-    }
-
-
     interface DBAction {
         void execute(Connection conn) throws SQLException;
     }
