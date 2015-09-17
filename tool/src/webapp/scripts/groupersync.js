@@ -98,12 +98,12 @@
 (function (exports) {
     "use strict";
 
-    function CharacterCountHandler($input, $countMessage) {
+    function CharacterCountHandler($input, $container) {
         this.input = $input;
-        this.countMessage = $countMessage;
+        this.countMessage = $container.find('.character-count');
+        this.hitLimitMessage = $container.find('.character-count-hit-limit');
         this.config = config;
 
-        $countMessage.show();
         this.bindToEvents();
         this.updateCountMessage();
     };
@@ -122,7 +122,14 @@
         var max = parseInt(this.input.attr("maxLength"));
         var remaining = max - count;
 
-        this.countMessage.find(".characters-remaining").html(remaining);
+        if (remaining == 0) {
+            this.hitLimitMessage.show();
+            this.countMessage.hide();
+        } else {
+            this.hitLimitMessage.hide();
+            this.countMessage.find(".character-count-number").html(remaining);
+            this.countMessage.show();
+        }
     };
 
     exports.CharacterCountHandler = CharacterCountHandler;

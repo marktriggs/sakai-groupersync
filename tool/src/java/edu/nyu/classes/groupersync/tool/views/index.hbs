@@ -68,9 +68,12 @@
                 <div class="form-group">
                     <label for="group-description">Group description</label>
                     <input required="true" type="text" class="form-control description" maxlength={{{maxDescriptionLength}}} name="description" placeholder="Description of new group">
-                    <div>
-                        <small style="display: none" class="description-character-count text-muted">
-                            <span class="characters-remaining"></span> characters remaining
+                    <div class="description-character-count">
+                        <small style="display: none" class="character-count-hit-limit text-danger">
+                            Character limit has been reached
+                        </small>
+                        <small style="display: none" class="character-count text-muted">
+                            <span class="character-count-number"></span> characters remaining
                         </small>
                     </div>
                 </div>
@@ -81,9 +84,12 @@
                         <input required="true" type="text" class="form-control address" name="groupId" placeholder="Address of new group">
                         <span class="input-append input-group-addon requiredSuffix">{{requiredSuffix}}</span>
                     </div>
-                    <div>
-                        <small style="display: none" class="group-address-character-count text-muted">
-                            <span class="characters-remaining"></span> characters remaining
+                    <div class="group-address-character-count">
+                        <small style="display: none" class="character-count-hit-limit text-danger">
+                            Character limit has been reached
+                        </small>
+                        <small style="display: none" class="character-count text-muted">
+                            <span class="character-count-number"></span> characters remaining
                         </small>
                     </div>
                     <div class="invalid-address-input" style="display: none">
