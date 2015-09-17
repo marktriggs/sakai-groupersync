@@ -11,8 +11,13 @@ import org.sakaiproject.site.api.Site;
 import org.sakaiproject.tool.cover.ToolManager;
 import org.sakaiproject.exception.IdUnusedException;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 
 public class CheckGroupHandler extends BaseHandler {
+
+    private static final Log log = LogFactory.getLog(CheckGroupHandler.class);
 
     public void handle(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         response.setHeader("Content-Type", "text/plain");
@@ -30,6 +35,7 @@ public class CheckGroupHandler extends BaseHandler {
                 return;
             }
         } catch (GrouperSyncException e) {
+            log.error("Error from grouper service:" + e);
         } catch (IdUnusedException e) {
         }
 

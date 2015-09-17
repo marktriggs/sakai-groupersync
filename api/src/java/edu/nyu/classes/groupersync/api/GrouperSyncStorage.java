@@ -17,7 +17,7 @@ public interface GrouperSyncStorage {
 
     void setLastRunDate(final Date date) throws GrouperSyncException;
 
-    void markGroupForSync(final String groupId, final String sakaiGroupId, final String description) throws GrouperSyncException;
+    void markGroupForSync(final String groupId, final String grouperGroupId, final String sakaiGroupId, final String description) throws GrouperSyncException;
 
     void deleteGroup(final String groupId) throws GrouperSyncException;
 

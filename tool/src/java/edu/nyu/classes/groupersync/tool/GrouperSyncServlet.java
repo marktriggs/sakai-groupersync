@@ -12,8 +12,10 @@ import org.sakaiproject.site.api.Site;
 import org.sakaiproject.site.cover.SiteService;
 import org.sakaiproject.tool.cover.SessionManager;
 import org.sakaiproject.tool.cover.ToolManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -32,7 +34,7 @@ import javax.naming.Context;
 
 public class GrouperSyncServlet extends HttpServlet {
 
-    private static final Logger LOG = LoggerFactory.getLogger(GrouperSyncServlet.class);
+    private static final Log log = LogFactory.getLog(GrouperSyncServlet.class);
 
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
@@ -69,7 +71,7 @@ public class GrouperSyncServlet extends HttpServlet {
         String siteId = ToolManager.getCurrentPlacement().getContext();
 
         if (!SecurityService.unlock("site.manage", "/site/" + siteId)) {
-            LOG.error("Access denied to GrouperSync management tool for user " + SessionManager.getCurrentSessionUserId());
+            log.error("Access denied to GrouperSync management tool for user " + SessionManager.getCurrentSessionUserId());
             throw new ServletException("Access denied");
         }
     }

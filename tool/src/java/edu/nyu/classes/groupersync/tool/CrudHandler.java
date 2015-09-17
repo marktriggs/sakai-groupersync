@@ -46,8 +46,10 @@ public class CrudHandler extends BaseHandler {
             }
 
             sakaiGroupId = findMatchingGroupId(siteId, sakaiGroupId);
+            String suffixedGroupId = groupId + requiredSuffix;
 
-            grouper.markGroupForSync(groupId + requiredSuffix,
+            grouper.markGroupForSync(suffixedGroupId,
+                    new GrouperIdFormatter().format(suffixedGroupId),
                     sakaiGroupId,
                     description);
 
@@ -56,6 +58,7 @@ public class CrudHandler extends BaseHandler {
         } catch (IdUnusedException e) {
             throw new ServletException("Failed to find site", e);
         } catch (GrouperSyncException e) {
+            log.error("Error when creating group", e);
             response.sendRedirect(determineBaseURL().toString() + "?error=group_in_use");
         }
     }

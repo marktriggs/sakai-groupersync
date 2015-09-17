@@ -175,15 +175,16 @@ public class GrouperSyncStorageImpl implements GrouperSyncStorage {
     }
 
     @Override
-    public void markGroupForSync(final String groupId, final String sakaiGroupId, final String description) throws GrouperSyncException {
+    public void markGroupForSync(final String groupId, final String grouperGroupId, final String sakaiGroupId, final String description) throws GrouperSyncException {
         try {
             DB.connection(new DBAction() {
                 public void execute(Connection connection) throws SQLException {
-                    PreparedStatement insert = connection.prepareStatement("insert into grouper_groups (group_id, sakai_group_id, description) values (?, ?, ?)");
+                    PreparedStatement insert = connection.prepareStatement("insert into grouper_groups (group_id, grouper_group_id, sakai_group_id, description) values (?, ?, ?, ?)");
 
                     insert.setString(1, groupId);
-                    insert.setString(2, sakaiGroupId);
-                    insert.setString(3, description);
+                    insert.setString(2, grouperGroupId);
+                    insert.setString(3, sakaiGroupId);
+                    insert.setString(4, description);
 
                     insert.executeUpdate();
                     insert.close();
