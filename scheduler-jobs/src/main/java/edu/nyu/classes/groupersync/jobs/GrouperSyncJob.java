@@ -21,11 +21,11 @@ import java.util.Set;
 public class GrouperSyncJob implements StatefulJob {
     private static final Log log = LogFactory.getLog(GrouperSyncJob.class);
 
-    private void syncGroups(Collection<SyncableGroup> groups, GrouperSyncStorage storage) {
+    private void syncGroups(Collection<SyncableGroup> groups, GrouperSyncService grouper) {
         for (SyncableGroup syncableGroup : groups) {
             try {
                 String sakaiGroupId = syncableGroup.getId();
-                GroupInfo groupInfo = storage.getGroupInfo(sakaiGroupId);
+                GroupInfo groupInfo = grouper.getGroupInfo(sakaiGroupId);
 
                 if (groupInfo == null) {
                     // This group hasn't been marked as needing syncing.
@@ -36,7 +36,7 @@ public class GrouperSyncJob implements StatefulJob {
 
                 log.info("Syncing group: " + syncableGroup.getTitle() + "(" + grouperGroupId + ")");
 
-                Collection<UserWithRole> formerMembers = storage.getMembers(grouperGroupId);
+                Collection<UserWithRole> formerMembers = grouper.getMembers(grouperGroupId);
                 Collection<UserWithRole> currentMembers = syncableGroup.getMembers();
 
                 log.info("Former members: " + formerMembers);
@@ -57,21 +57,21 @@ public class GrouperSyncJob implements StatefulJob {
                 log.info("Dropped users: " + droppedUsers);
                 log.info("Changed roles: " + changedRoles);
 
-                storage.recordChanges(grouperGroupId, addedUsers, droppedUsers, changedRoles);
+                grouper.recordChanges(grouperGroupId, addedUsers, droppedUsers, changedRoles);
             } catch (GrouperSyncException e) {
                 log.error("Hit an error while syncing Sakai group: " + syncableGroup.getId(), e);
             }
         }
     }
 
-    private void syncGroups(UpdatedSite update, GrouperSyncStorage storage, CourseManagementService courseManagement) {
+    private void syncGroups(UpdatedSite update, GrouperSyncService grouper, CourseManagementService courseManagement) {
         try {
             log.info("Syncing groups for site: " + update.getSiteId());
 
             SiteGroupReader groupReader = new SiteGroupReader(update.getSiteId(), courseManagement);
             Collection<SyncableGroup> siteGroups = groupReader.groups();
 
-            syncGroups(siteGroups, storage);
+            syncGroups(siteGroups, grouper);
         } catch (IdUnusedException e) {
             log.warn("Couldn't find site: " + update.getSiteId());
         }
@@ -131,10 +131,8 @@ public class GrouperSyncJob implements StatefulJob {
             Set<String> processedSites = new HashSet<String>();
             UpdatedSites updatedSites = new UpdatedSites(sqlService);
 
-            GrouperSyncStorage storage = grouper.getStorage();
-
             Date now = new Date();
-            Date previousTime = storage.getLastRunDate();
+            Date previousTime = grouper.getLastRunDate();
 
             log.info("Running GrouperSyncJob (last run time was " + previousTime + ")");
 
@@ -145,13 +143,13 @@ public class GrouperSyncJob implements StatefulJob {
                 }
 
                 log.info("Syncing site: " + update.getSiteId());
-                syncGroups(update, storage, cms);
+                syncGroups(update, grouper, cms);
                 log.info("Syncing site completed: " + update.getSiteId());
 
                 processedSites.add(update.getSiteId());
             }
 
-            storage.setLastRunDate(now);
+            grouper.setLastRunDate(now);
 
             log.info("GrouperSyncJob completed");
         } catch (GrouperSyncException e) {
