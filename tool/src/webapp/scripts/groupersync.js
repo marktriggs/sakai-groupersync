@@ -223,6 +223,11 @@
         template.find('.create-group-form :input.address').val(groupContainer['address']).prop('readonly', true);
         template.find('.create-group-form .input-append').remove();
 
+        template.find('.create-group-form .clear-btn').on('click', function () {
+            template.find(':input.description').val('');
+            return false;
+        });
+
         this.showDeleteButton(template, groupContainer);
 
         $('#modal-area .modal-body').empty().append(template);
@@ -379,7 +384,13 @@
 
         $(document.body).append($modal);
 
+        $modal.on("shown.bs.modal", function() {
+            $modal.find('.cancel-btn').focus();
+        });
+
         $modal.modal("show");
+
+
     };
 
 

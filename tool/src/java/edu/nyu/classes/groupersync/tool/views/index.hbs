@@ -116,7 +116,7 @@
 
 
     <script id="delete-confirmation-template" type="text/template">
-        <div id="deleteConfirmationModal" class="modal fade">
+        <div id="deleteConfirmationModal" class="modal fade" tabindex="-1" data-keyboard="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -129,7 +129,7 @@
                         <strong id="groupEmail" class="col-md-offset-1"></strong>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-default cancel-btn" data-dismiss="modal">Cancel</button>
                         <button type="button" class="btn btn-primary btn-danger">Delete Group</button>
                     </div>
                 </div>
