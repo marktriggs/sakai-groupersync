@@ -95,6 +95,47 @@ class UpdatedSites {
         ps.close();
     }
 
+
+    // FIXME
+    private void addSitesWithGrouperSyncChanges(Connection db, Timestamp since, List<UpdatedSite> result)
+            throws SQLException {
+
+        String sql = (
+                      // Find by group
+                      "select ssg.site_id, gd.mtime " +
+                      "from grouper_group_definitions gd " +
+                      "inner join sakai_site_group ssg on ssg.group_id = gd.sakai_group_id " +
+                      "where gd.mtime >= ?" +
+
+                      " UNION " +
+
+                      // And by site
+                      "select ss.site_id, gd.mtime " +
+                      "from grouper_group_definitions gd " +
+                      "inner join sakai_site ss on ss.site_id = gd.sakai_group_id " +
+                      "where gd.mtime >= ?"
+        );
+
+        PreparedStatement ps = db.prepareStatement(sql);
+
+        ps.setLong(1, since.getTime());
+        ps.setLong(2, since.getTime());
+
+        ResultSet rs = ps.executeQuery();
+
+        while (rs.next()) {
+            String siteId = extractSiteId(rs.getString(1));
+
+            if (siteId != null) {
+                result.add(new UpdatedSite(siteId, new Timestamp(rs.getLong(2))));
+            }
+        }
+
+        rs.close();
+        ps.close();
+    }
+
+
     public List<UpdatedSite> listSince(Date since) {
         List<UpdatedSite> result = new ArrayList<UpdatedSite>();
 
@@ -111,6 +152,10 @@ class UpdatedSites {
 
             // Sites whose attached rosters were changed
             addSitesWithUpdatedRosters(db, sinceTime, result);
+
+            // Sites whose Grouper sync status was changed
+            addSitesWithGrouperSyncChanges(db, sinceTime, result);
+
         } catch (SQLException e) {
             throw new RuntimeException("DB error when looking for updated sites: " + e, e);
         } finally {

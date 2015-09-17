@@ -27,7 +27,7 @@ public class GrouperSyncStorageImpl implements GrouperSyncStorage {
         try {
             DB.connection(new DBAction() {
                 public void execute(Connection connection) throws SQLException {
-                    PreparedStatement ps = connection.prepareStatement("select group_id, sakai_group_id, description from grouper_groups where sakai_group_id = ? AND deleted != 1");
+                    PreparedStatement ps = connection.prepareStatement("select group_id, sakai_group_id, description from grouper_group_definitions where sakai_group_id = ? AND deleted != 1");
                     ps.setString(1, sakaiGroupId);
 
                     ResultSet rs = ps.executeQuery();
@@ -179,12 +179,13 @@ public class GrouperSyncStorageImpl implements GrouperSyncStorage {
         try {
             DB.connection(new DBAction() {
                 public void execute(Connection connection) throws SQLException {
-                    PreparedStatement insert = connection.prepareStatement("insert into grouper_groups (group_id, grouper_group_id, sakai_group_id, description) values (?, ?, ?, ?)");
+                    PreparedStatement insert = connection.prepareStatement("insert into grouper_group_definitions (group_id, grouper_group_id, sakai_group_id, description, mtime) values (?, ?, ?, ?, ?)");
 
                     insert.setString(1, groupId);
                     insert.setString(2, grouperGroupId);
                     insert.setString(3, sakaiGroupId);
                     insert.setString(4, description);
+                    insert.setLong(5, System.currentTimeMillis());
 
                     insert.executeUpdate();
                     insert.close();
@@ -205,10 +206,11 @@ public class GrouperSyncStorageImpl implements GrouperSyncStorage {
         try {
             DB.connection(new DBAction() {
                 public void execute(Connection connection) throws SQLException {
-                    PreparedStatement insert = connection.prepareStatement("update grouper_groups set description = ? where group_id = ?");
+                    PreparedStatement insert = connection.prepareStatement("update grouper_group_definitions set description = ?, mtime = ? where group_id = ?");
 
                     insert.setString(1, description);
-                    insert.setString(2, groupId);
+                    insert.setLong(2, System.currentTimeMillis());
+                    insert.setString(3, groupId);
 
                     insert.executeUpdate();
                     insert.close();
@@ -230,7 +232,7 @@ public class GrouperSyncStorageImpl implements GrouperSyncStorage {
             DB.connection(new DBAction() {
                 public void execute(Connection connection) throws SQLException {
                     // Mark as deleted
-                    PreparedStatement ps = connection.prepareStatement("select count(1) from grouper_groups where group_id = ?");
+                    PreparedStatement ps = connection.prepareStatement("select count(1) from grouper_group_definitions where group_id = ?");
                     ps.setString(1, groupId);
                     ResultSet rs = ps.executeQuery();
 
@@ -256,8 +258,9 @@ public class GrouperSyncStorageImpl implements GrouperSyncStorage {
             DB.connection(new DBAction() {
                 public void execute(Connection connection) throws SQLException {
                     // Mark as deleted
-                    PreparedStatement insert = connection.prepareStatement("update grouper_groups set deleted = 1 where group_id = ?");
-                    insert.setString(1, groupId);
+                    PreparedStatement insert = connection.prepareStatement("update grouper_group_definitions set deleted = 1, mtime = ? where group_id = ?");
+                    insert.setLong(1, System.currentTimeMillis());
+                    insert.setString(2, groupId);
                     insert.executeUpdate();
                     insert.close();
 
