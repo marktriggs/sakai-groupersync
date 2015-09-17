@@ -1,3 +1,6 @@
+// FIXME: Currently seems like this class isn't earning its keep.  Might as well
+// just rename the GrouperSyncStorageImpl to GrouperSyncServiceImpl?
+//
 package edu.nyu.classes.groupersync.impl;
 
 import edu.nyu.classes.groupersync.api.GroupInfo;
