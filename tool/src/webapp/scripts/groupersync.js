@@ -219,6 +219,7 @@
             resizeFrame();
             template.find('.description').focus();
             new CharacterCountHandler(template.find(":input.description"), template.find(".description-character-count"));
+            new DeleteHandler(template.find("form.delete-group-form"), template.find('.create-group-form :input.address').val());
         });
     };
 
@@ -313,5 +314,61 @@
 
     exports.GrouperSync = GrouperSync;
 
+}(this));
+
+
+// Grouper Delete Handler
+(function (exports) {
+    "use strict";
+
+
+    function DeleteHandler(form, address) {
+        this.form = form;
+        this.address = address;
+
+        this.deleteConfirmed = false;
+
+        this.bindToEvents();
+    };
+
+
+    DeleteHandler.prototype.bindToEvents = function() {
+        var self = this;
+
+        self.form.on("submit", function() {
+            if (self.deleteConfirmed) {
+              return true;
+            }
+
+            self.showConfirmation();
+
+            return false;
+        });
+    }
+
+
+    DeleteHandler.prototype.showConfirmation = function() {
+        var self = this;
+
+        var $modal = $($("#delete-confirmation-template").html().trim());
+
+        $modal.on("click", ".btn.btn-primary", function() {
+            self.deleteConfirmed = true;
+            self.form.submit();
+        });
+
+        $modal.on("hidden.bs.modal", function() {
+            $modal.remove();
+        });
+
+        $modal.find("#groupEmail").html(self.address);
+
+        $(document.body).append($modal);
+
+        $modal.modal("show");
+    };
+
+
+    exports.DeleteHandler = DeleteHandler;
 }(this));
 
