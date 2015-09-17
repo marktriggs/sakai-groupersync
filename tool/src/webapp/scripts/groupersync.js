@@ -148,6 +148,13 @@
         template.find('.sakaiGroupId').val(sakaiGroupId);
         template.find(':input.description').val(groupContainer['sakaiGroupTitle'].substring(0, this.config.maxDescriptionLength));
 
+        template.find('.create-group-form .clear-btn').on('click', function () {
+            template.find(':input.address').val('');
+            template.find(':input.description').val('').trigger('change');
+
+            return false;
+        });
+
         // Quick check to see if the group is OK prior to submitting.
         template.find('.create-group-form .submit-btn').on('click', function () {
             var address = template.find(":input.address");

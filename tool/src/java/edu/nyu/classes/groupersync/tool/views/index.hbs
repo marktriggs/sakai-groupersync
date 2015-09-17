@@ -80,9 +80,6 @@
                     <div class="input-group">
                         <input required="true" type="text" class="form-control address" name="groupId" placeholder="Address of new group">
                         <span class="input-append input-group-addon requiredSuffix">{{requiredSuffix}}</span>
-                        <span class="input-append input-group-btn">
-                            <button type="button" class="btn btn-default reset-address-btn"><i class="glyphicon glyphicon-remove"></i></button>
-                        </span>
                     </div>
                     <div>
                         <small style="display: none" class="group-address-character-count text-muted">
@@ -98,6 +95,7 @@
                 </div>
 
                 <button type="submit" class="btn submit-btn btn-primary">Submit</button>
+                <button type="button" class="btn clear-btn btn-default">Clear</button>
             </form>
             <!-- Delete button -->
             <form style="display: none" class="delete-group-form" method="POST">
