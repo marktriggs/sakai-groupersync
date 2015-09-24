@@ -20,12 +20,12 @@ create index grouper_groups_role on grouper_group_users (role);
 -- View exposed to grouper
 create view grouper_groups as select grouper_group_id as group_id, description from grouper_group_definitions where deleted != 1;
 
-create or replace view grouper_memberships as select gd.grouper_group_id as group_id, u.netid, gd.description as description
+create or replace view grouper_memberships as select gd.grouper_group_id as group_id, u.netid, gd.description as group_description
 from grouper_group_definitions gd
 inner join grouper_group_users u on u.group_id = gd.group_id
 where u.role = 'viewer';
 
-create or replace view grouper_managers as select gd.grouper_group_id as group_id, u.netid, gd.description as description
+create or replace view grouper_managers as select gd.grouper_group_id as group_id, u.netid, gd.description as group_description
 from grouper_group_definitions gd
 inner join grouper_group_users u on u.group_id = gd.group_id
 where u.role = 'manager';
