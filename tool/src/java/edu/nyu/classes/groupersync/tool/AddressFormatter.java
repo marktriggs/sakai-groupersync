@@ -6,4 +6,9 @@ class AddressFormatter {
         return grouperId.replace(":", "-") + "@nyu.edu";
     }
 
+    public static String formatTerm(String termEid) {
+        int length = termEid.length();
+
+        return (termEid.substring(0, 2) + termEid.substring(length - 2, length)).toUpperCase();
+    }
 }

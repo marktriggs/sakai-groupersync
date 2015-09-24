@@ -20,6 +20,8 @@ abstract class BaseHandler {
 
         if (termEid == null) {
             termEid = "prj";
+        } else {
+            termEid = AddressFormatter.formatTerm(termEid);
         }
 
         return ":" + termEid + ":" + site.getId().substring(0, 4);
