@@ -149,6 +149,11 @@ public class GrouperSyncJob implements StatefulJob {
                 processedSites.add(update.getSiteId());
             }
 
+            // Find and delete any groups that were removed on the Sakai side
+            log.info("Finding and removing detached groups");
+            grouper.deleteDetachedGroups();
+            log.info("Detached groups run finished");
+
             grouper.setLastRunDate(now);
 
             log.info("GrouperSyncJob completed");

@@ -279,6 +279,41 @@ public class GrouperSyncServiceImpl implements GrouperSyncService {
     }
 
 
+    // Delete any group from Grouper that was deleted in Sakai (e.g. adhoc group removed, section detached)
+    @Override
+    public void deleteDetachedGroups() throws GrouperSyncException {
+        // Weird inner select to allow support for MySQL which can't update the
+        // table it's sub-selecting from.
+        final String detachedGroupSql = ("select ggd.group_id" +
+                " from (select group_id, sakai_group_id, deleted from grouper_group_definitions) ggd" +
+                " left outer join sakai_site_group ssg on ssg.group_id = ggd.sakai_group_id" +
+                " left outer join sakai_site ss on ss.site_id = ggd.sakai_group_id" +
+                " where ggd.deleted != 1 AND ssg.group_id is NULL AND ss.site_id is NULL");
+
+        try {
+            DB.connection(new DBAction() {
+                public void execute(Connection connection) throws SQLException {
+                    // Drop all members
+                    PreparedStatement dropMembers = connection.prepareStatement("delete from grouper_group_users where group_id in (" + detachedGroupSql + ")");
+                    dropMembers.executeUpdate();
+                    dropMembers.close();
+
+                    // Mark as deleted
+                    PreparedStatement insert = connection.prepareStatement("update grouper_group_definitions set deleted = 1, mtime = ? " +
+                            " where group_id in (" + detachedGroupSql + ")");
+                    insert.setLong(1, System.currentTimeMillis());
+                    insert.executeUpdate();
+                    insert.close();
+
+                    connection.commit();
+                }
+            });
+        } catch (SQLException e) {
+            throw new GrouperSyncException("Failure while deleting detached groups", e);
+        }
+    }
+
+
     interface DBAction {
         void execute(Connection conn) throws SQLException;
     }

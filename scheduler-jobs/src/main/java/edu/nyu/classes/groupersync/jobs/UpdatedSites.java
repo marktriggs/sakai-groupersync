@@ -96,7 +96,6 @@ class UpdatedSites {
     }
 
 
-    // FIXME
     private void addSitesWithGrouperSyncChanges(Connection db, Timestamp since, List<UpdatedSite> result)
             throws SQLException {
 

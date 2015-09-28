@@ -25,6 +25,8 @@ public interface GrouperSyncService {
 
     void setLastRunDate(final Date date) throws GrouperSyncException;
 
+    public void deleteDetachedGroups() throws GrouperSyncException;
+
     void init();
 
     void destroy();
