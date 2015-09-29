@@ -20,6 +20,10 @@ class Configuration {
         return 60;
     }
 
+    public static String getDescriptionExcludedCharacters() {
+        return ":";
+    }
+
     public static String getAddressAllowedCharacters() {
         return "a-zA-Z0-9_.";
     }

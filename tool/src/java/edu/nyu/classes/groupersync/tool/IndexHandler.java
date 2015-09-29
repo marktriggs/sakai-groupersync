@@ -88,6 +88,7 @@ public class IndexHandler extends BaseHandler {
 	    // Configuration bits we need
 	    context.put("maxDescriptionLength", Configuration.getMaxDescriptionLength());
 	    context.put("maxAddressLength", Configuration.getMaxAddressLength());
+	    context.put("descriptionExcludedCharacters", Configuration.getDescriptionExcludedCharacters());
 	    context.put("addressAllowedCharacters", Configuration.getAddressAllowedCharacters());
 	    context.put("whitespaceReplacementCharacter", Configuration.getWhitespaceReplacementCharacter());
 

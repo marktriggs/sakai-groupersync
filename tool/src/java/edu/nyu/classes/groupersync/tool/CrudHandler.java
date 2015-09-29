@@ -154,6 +154,12 @@ public class CrudHandler extends BaseHandler {
 	    throw new ServletException("Description too long!");
 	}
 
+	Pattern invalidRegexp = Pattern.compile("[" + Configuration.getDescriptionExcludedCharacters() + "]");
+
+	if (invalidRegexp.matcher(description).find()) {
+	    throw new ServletException("Invalid description");
+	}
+
 	return description;
     }
 

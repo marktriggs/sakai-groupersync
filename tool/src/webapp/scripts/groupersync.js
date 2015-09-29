@@ -10,7 +10,8 @@
 
         this.requiredSuffixLength = form.find('.requiredSuffix').text().split(/@/)[0].length;
         this.lastGeneratedValue = '';
-        this.invalid_char_regex = new RegExp("[^" + config.addressAllowedCharacters + config.whitespaceReplacementCharacter + "]", 'g');
+        this.invalid_description_regex = new RegExp("[" + config.descriptionExcludedCharacters + "]", 'g');
+        this.invalid_address_regex = new RegExp("[^" + config.addressAllowedCharacters + config.whitespaceReplacementCharacter + "]", 'g');
         this.whitespace_replacement_char = config.whitespaceReplacementCharacter;
         this.maxLength = config.maxAddressLength;
 
@@ -26,14 +27,29 @@
 
 
     AutoPopulateHandler.prototype.descriptionUpdated = function () {
+        var description = this.descriptionInput.val();
+
+        // Check that the description doesn't have any garbage
+        if (new RegExp(this.invalid_description_regex).test(description)) {
+            // Invalid
+            this.descriptionInput.closest('.form-group').addClass('has-error');
+            $('.invalid-description-input').show();
+        } else {
+            // OK
+            this.descriptionInput.closest('.form-group').removeClass('has-error');
+            $('.invalid-description-input').hide();
+        }
+
+
+        // Generate our new address from the description
         if (this.addressInput.val() != '' && this.addressInput.val() != this.lastGeneratedValue) {
             // You're on your own!  Type it yourself.
             return;
         }
 
-        this.lastGeneratedValue = this.descriptionInput.val().toLowerCase()
+        this.lastGeneratedValue = description.toLowerCase()
             .replace(/\s+/g, this.whitespace_replacement_char)
-            .replace(this.invalid_char_regex, '')
+            .replace(this.invalid_address_regex, '')
             .substring(0, this.calculateMaxLength());
 
         this.addressInput.val(this.lastGeneratedValue).trigger("change");
@@ -47,17 +63,18 @@
         // OK since we put them in ourselves.
         var noHyphens = value.replace(new RegExp(this.whitespace_replacement_char, 'g'), '');
 
-        if (new RegExp(this.invalid_char_regex).test(noHyphens) || new RegExp(/\s/).test(noHyphens)) {
+        if (new RegExp(this.invalid_address_regex).test(noHyphens) || new RegExp(/\s/).test(noHyphens)) {
             // Invalid
             this.addressInput.closest('.form-group').addClass('has-error');
             $('.invalid-address-input').show();
-            this.submit.prop('disabled', true);
         } else {
             // OK
             this.addressInput.closest('.form-group').removeClass('has-error');
             $('.invalid-address-input').hide();
-            this.submit.prop('disabled', false);
         }
+
+        // If anything on the form looks invalid, disable submit.
+        this.submit.prop('disabled', ($(this.form).find('.has-error').length > 0));
     };
 
     AutoPopulateHandler.prototype.bindToEvents = function () {
