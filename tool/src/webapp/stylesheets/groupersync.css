@@ -3,6 +3,15 @@ body {
     font-size: 1.2em !important;
 }
 
+.groups-table {
+    margin-left: 1em;
+    max-width: 900px;
+}
+
+.show-members-btn {
+    margin: 5px;
+}
+
 .member-list {
     list-style-type: none;
 }
