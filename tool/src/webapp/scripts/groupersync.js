@@ -206,7 +206,7 @@
 
 
         $('#modal-area .modal-body').empty().append(template);
-        $('#modal-area .modal-title').html('Create new group');
+        $('#modal-area .modal-title').html('Create new Google Group');
         $('#modal-area').modal();
 
         $('#modal-area').on('shown.bs.modal', function () {
@@ -248,7 +248,7 @@
         this.showDeleteButton(template, groupContainer);
 
         $('#modal-area .modal-body').empty().append(template);
-        $('#modal-area .modal-title').html('Edit group');
+        $('#modal-area .modal-title').html('Edit Google Group');
         $('#modal-area').modal();
 
         $('#modal-area').on('shown.bs.modal', function () {

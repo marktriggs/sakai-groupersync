@@ -157,7 +157,7 @@ public class CrudHandler extends BaseHandler {
 	Pattern invalidRegexp = Pattern.compile("[" + Configuration.getDescriptionExcludedCharacters() + "]");
 
 	if (invalidRegexp.matcher(description).find()) {
-	    throw new ServletException("Invalid description");
+	    throw new ServletException("Invalid group name");
 	}
 
 	return description;
