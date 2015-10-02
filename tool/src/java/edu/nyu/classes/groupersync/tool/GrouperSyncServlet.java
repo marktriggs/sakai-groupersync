@@ -70,7 +70,7 @@ public class GrouperSyncServlet extends HttpServlet {
     private void checkAccessControl() throws ServletException {
         String siteId = ToolManager.getCurrentPlacement().getContext();
 
-        if (!SecurityService.unlock("site.manage", "/site/" + siteId)) {
+        if (!SecurityService.unlock("site.upd", "/site/" + siteId)) {
             log.error("Access denied to GrouperSync management tool for user " + SessionManager.getCurrentSessionUserId());
             throw new ServletException("Access denied");
         }
