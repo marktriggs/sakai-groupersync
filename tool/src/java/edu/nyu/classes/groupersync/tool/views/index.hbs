@@ -10,6 +10,7 @@
         <div class="alert alert-success">{{success}}</div>
     {{/if}}
 
+    <h3>Site Groups</h3>
     <table class="groups-table table table-striped table-bordered table-hover table-condensed">
       <thead>
         <tr>
@@ -18,29 +19,45 @@
         </tr>
       </thead>
       <tbody>
-          <tr><th colspan="4">Site Group</th></tr>
           {{#each wholeSite}}
               {{> edu/nyu/classes/groupersync/tool/views/grouprows}}
           {{/each}}
       </tbody>
-      {{#if sections}}
+    </table>
+
+    {{#if sections}}
+    <h3>Section groups</h3>
+    <table class="groups-table table table-striped table-bordered table-hover table-condensed">
+      <thead>
+        <tr>
+          <th class="col-md-3">NYU Classes Group Name</th>
+          <th class="col-md-6">Google Group Details</th>
+        </tr>
+      </thead>
       <tbody>
-          <tr><th colspan="4">Sections</th></tr>
           {{#each sections}}
               {{> edu/nyu/classes/groupersync/tool/views/grouprows}}
           {{/each}}
       </tbody>
-      {{/if}}
-      {{#if adhocGroups}}
-          <tbody>
-              <tr><th colspan="4">Adhoc Groups</th></tr>
-              {{#each adhocGroups}}
-                  {{> edu/nyu/classes/groupersync/tool/views/grouprows}}
-              {{/each}}
-          </tbody>
-      {{/if}}
-
     </table>
+    {{/if}}
+
+    {{#if adhocGroups}}
+    <h3>Ad hoc groups</h3>
+    <table class="groups-table table table-striped table-bordered table-hover table-condensed">
+      <thead>
+        <tr>
+          <th class="col-md-3">NYU Classes Group Name</th>
+          <th class="col-md-6">Google Group Details</th>
+        </tr>
+      </thead>
+      <tbody>
+          {{#each adhocGroups}}
+              {{> edu/nyu/classes/groupersync/tool/views/grouprows}}
+          {{/each}}
+      </tbody>
+    </table>
+    {{/if}}
 
     <div id="modal-area" data-keyboard="true" class="modal fade" style="display: none" tabindex="-1">
         <div class="modal-dialog">

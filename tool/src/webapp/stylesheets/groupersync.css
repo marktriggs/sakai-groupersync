@@ -8,6 +8,15 @@ body {
     max-width: 900px;
 }
 
+h2, h3 {
+    font-weight: bold;
+}
+
+h3 {
+    margin-left: 1em;
+    padding-bottom: 5px;
+}
+
 .show-members-btn {
     margin: 5px;
 }
