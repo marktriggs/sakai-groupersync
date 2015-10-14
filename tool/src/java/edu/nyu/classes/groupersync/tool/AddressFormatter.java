@@ -6,6 +6,10 @@ class AddressFormatter {
         return grouperId.replace(":", "-") + "@nyu.edu";
     }
 
+    public static String formatUrl(String grouperId) {
+        return "https://groups.google.com/a/nyu.edu/forum/#!forum/" + grouperId.replace(":", "-");
+    }
+
     public static String formatTerm(String termEid) {
         int length = termEid.length();
 

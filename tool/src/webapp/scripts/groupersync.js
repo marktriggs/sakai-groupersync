@@ -314,6 +314,27 @@
         return $(row).closest('.group-container').data();
     };
 
+    var guessPlatform = function () {
+        if (navigator.appVersion.indexOf("Mac") >= 0) {
+            return 'mac';
+        } else {
+            return 'default';
+        }
+    }
+
+    GrouperSync.prototype.handleCopyToClipboard = function (button) {
+        $('.clipboard-help-text').hide();
+
+        var inputGroup = $(button).closest('.input-group');
+        var input = inputGroup.find('input[type=text]');
+
+        if (input.length > 0) {
+            input[0].select();
+        }
+
+        inputGroup.closest('.form-group').find('.clipboard-help-text.platform-' + guessPlatform()).show();
+    };
+
     GrouperSync.prototype.showMembers = function (groupContainer) {
         var self = this;
         var sakaiGroupId = groupContainer['sakaiGroupId'];
@@ -345,6 +366,17 @@
         $(document).on('click', '.edit-btn', function () {
             new CRUDModal(self.baseUrl, config).showEditForm(dataFor(this));
         });
+
+        if (/Mobi/.test(navigator.userAgent)) {
+            // mobile!
+            $('.copy-to-clipboard').hide();
+        } else {
+            $(document).on('click', '.copy-to-clipboard', function () {
+                self.handleCopyToClipboard(this);
+            });
+
+            $('.copy-to-clipboard').show();
+        }
     };
 
 

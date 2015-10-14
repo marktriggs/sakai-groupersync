@@ -31,9 +31,17 @@ h3 {
     overflow-y: auto;
 }
 
-.modal-body .form-control {
+.group-container .form-control, .modal-body .form-control {
     padding: 6px 12px;
     height: 34px;
+}
+
+.group-description {
+    margin-bottom: 1em;
+}
+
+.clipboard-help-text {
+    color: green;
 }
 
 .member-list .member .name {

@@ -55,6 +55,14 @@ class GroupView {
         }
     }
 
+    public String getUrl() {
+        if (groupInfo.getGrouperId() != null) {
+            return AddressFormatter.formatUrl(groupInfo.getGrouperId());
+        } else {
+            return "";
+        }
+    }
+
     public String getLabel() {
         return groupInfo.getLabel();
     }
