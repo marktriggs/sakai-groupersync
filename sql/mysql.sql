@@ -15,7 +15,7 @@ create table grouper_group_users (group_id varchar(255), netid varchar(255), rol
 
 create index grouper_group_definitions_role on grouper_group_users (role);
 
--- View exposed to grouper
+-- Tables/views exposed to grouper
 create view grouper_groups as select grouper_group_id as group_id, description from grouper_group_definitions where deleted != 1;
 
 create or replace view grouper_memberships as select gd.grouper_group_id as group_id, u.netid, gd.description as group_description
@@ -27,3 +27,9 @@ create or replace view grouper_managers as select gd.grouper_group_id as group_i
 from grouper_group_definitions gd
 inner join grouper_group_users u on u.group_id = gd.group_id
 where u.role = 'manager';
+
+create table grouper_sync_status (group_id varchar(255) PRIMARY KEY,
+       grouper_group_id varchar(255) NOT NULL,
+       status varchar(100));
+
+create index grouper_sync_status_grpid on grouper_sync_status (grouper_group_id);

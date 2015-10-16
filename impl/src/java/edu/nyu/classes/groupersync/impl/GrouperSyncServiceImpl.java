@@ -66,8 +66,6 @@ public class GrouperSyncServiceImpl implements GrouperSyncService {
                     rs.close();
                     ps.close();
                 }
-
-                ;
             });
         } catch (SQLException e) {
             throw new GrouperSyncException("Failure when fetching members for group: " + groupId, e);
@@ -114,8 +112,6 @@ public class GrouperSyncServiceImpl implements GrouperSyncService {
 
                     connection.commit();
                 }
-
-                ;
             });
         } catch (SQLException e) {
             throw new GrouperSyncException("Failure when recording change in members for group: " + groupId, e);
@@ -166,8 +162,6 @@ public class GrouperSyncServiceImpl implements GrouperSyncService {
 
                     connection.commit();
                 }
-
-                ;
             });
         } catch (SQLException e) {
             throw new GrouperSyncException("Failure when setting job last_run_time", e);
@@ -190,10 +184,17 @@ public class GrouperSyncServiceImpl implements GrouperSyncService {
                     insert.executeUpdate();
                     insert.close();
 
+                    insert = connection.prepareStatement("insert into grouper_sync_status (group_id, grouper_group_id, status) values (?, ?, ?)");
+
+                    insert.setString(1, groupId);
+                    insert.setString(2, grouperGroupId);
+                    insert.setString(3, "new");
+
+                    insert.executeUpdate();
+                    insert.close();
+
                     connection.commit();
                 }
-
-                ;
             });
         } catch (SQLException e) {
             throw new GrouperSyncException("Failure while inserting group", e);
