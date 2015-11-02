@@ -48,6 +48,10 @@ h3 {
     color: green;
 }
 
+.group-pending-msg {
+    color: green;
+}
+
 .member-list .member .name {
     display: inline-block;
     width: 15em;

@@ -16,6 +16,7 @@ import java.util.Set;
 public class GrouperSyncServiceImpl implements GrouperSyncService {
 
     private static final Log log = LogFactory.getLog(GrouperSyncServiceImpl.class);
+    private static final String SYNCED_STATUS = "synced";
 
     // Return information about a Sakai group that was marked as needing syncing.
     //
@@ -27,13 +28,19 @@ public class GrouperSyncServiceImpl implements GrouperSyncService {
         try {
             DB.connection(new DBAction() {
                 public void execute(Connection connection) throws SQLException {
-                    PreparedStatement ps = connection.prepareStatement("select group_id, sakai_group_id, description from grouper_group_definitions where sakai_group_id = ? AND deleted != 1");
+                    PreparedStatement ps = connection.prepareStatement("select ggd.group_id, ggd.sakai_group_id, ggd.description, gss.status" +
+                            " from grouper_group_definitions ggd" +
+                            " inner join grouper_sync_status gss on gss.group_id = ggd.group_id" +
+                            " where ggd.sakai_group_id = ? AND ggd.deleted != 1");
                     ps.setString(1, sakaiGroupId);
 
                     ResultSet rs = ps.executeQuery();
 
                     if (rs.next()) {
-                        result[0] = new GroupInfo(rs.getString("description"), rs.getString("group_id"), rs.getString("sakai_group_id"));
+                        result[0] = new GroupInfo(rs.getString("ggd.description"),
+                                rs.getString("ggd.group_id"),
+                                rs.getString("ggd.sakai_group_id"),
+                                SYNCED_STATUS.equals(rs.getString("gss.status")));
                     }
 
                     rs.close();

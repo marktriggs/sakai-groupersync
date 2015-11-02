@@ -6,26 +6,28 @@ public class GroupInfo {
     private final String label;
     private final String grouperId;
     private final String sakaiId;
+    private final boolean readyForUse;
 
 
     public GroupInfo() {
         // Null object
-        this(GroupStatus.AVAILABLE_FOR_SYNC, "", null, null);
+        this(GroupStatus.AVAILABLE_FOR_SYNC, "", null, null, false);
     }
 
-    public GroupInfo(String label, String grouperId, String sakaiId) {
-        this(GroupStatus.MARKED_FOR_SYNC, label, grouperId, sakaiId);
+    public GroupInfo(String label, String grouperId, String sakaiId, boolean readyForUse) {
+        this(GroupStatus.MARKED_FOR_SYNC, label, grouperId, sakaiId, readyForUse);
     }
 
-    private GroupInfo(GroupStatus status, String label, String grouperId, String sakaiId) {
+    private GroupInfo(GroupStatus status, String label, String grouperId, String sakaiId, boolean readyForUse) {
         this.status = status;
         this.label = label;
         this.grouperId = grouperId;
         this.sakaiId = sakaiId;
+        this.readyForUse = readyForUse;
     }
 
     public static GroupInfo unknown() {
-        return new GroupInfo(GroupStatus.UNKNOWN, "", null, null);
+        return new GroupInfo(GroupStatus.UNKNOWN, "", null, null, false);
     }
 
     public String getGrouperId() {
@@ -42,6 +44,10 @@ public class GroupInfo {
 
     public String getLabel() {
         return label;
+    }
+
+    public boolean isReadyForUse() {
+        return readyForUse;
     }
 
     public enum GroupStatus {

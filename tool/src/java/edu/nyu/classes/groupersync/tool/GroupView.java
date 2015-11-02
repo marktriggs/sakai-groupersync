@@ -79,4 +79,7 @@ class GroupView {
         return groupInfo.getStatus().equals(GroupInfo.GroupStatus.MARKED_FOR_SYNC);
     }
 
+    public boolean isReadyForUse() {
+        return groupInfo.isReadyForUse();
+    }
 }
