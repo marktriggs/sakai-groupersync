@@ -31,8 +31,8 @@ public class IndexHandler extends BaseHandler {
 
     enum MessageStrings {
         GROUP_IN_USE("That group name is taken.  Please choose another."),
-        GROUP_CREATED("Group successfully created"),
-        GROUP_UPDATED("Group successfully updated"),
+        GROUP_CREATED("Your new group is now being created"),
+        GROUP_UPDATED("Group details updated"),
         UPDATE_FAILED("Group update could not be completed"),
         GROUP_DELETED("Group successfully deleted"),
         DELETE_FAILED("Group delete could not be completed");
