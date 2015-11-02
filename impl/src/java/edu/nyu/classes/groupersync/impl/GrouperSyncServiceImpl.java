@@ -37,10 +37,10 @@ public class GrouperSyncServiceImpl implements GrouperSyncService {
                     ResultSet rs = ps.executeQuery();
 
                     if (rs.next()) {
-                        result[0] = new GroupInfo(rs.getString("ggd.description"),
-                                rs.getString("ggd.group_id"),
-                                rs.getString("ggd.sakai_group_id"),
-                                SYNCED_STATUS.equals(rs.getString("gss.status")));
+                        result[0] = new GroupInfo(rs.getString("description"),
+                                rs.getString("group_id"),
+                                rs.getString("sakai_group_id"),
+                                SYNCED_STATUS.equals(rs.getString("status")));
                     }
 
                     rs.close();
