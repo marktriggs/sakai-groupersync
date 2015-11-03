@@ -30,7 +30,7 @@ import org.sakaiproject.tool.cover.SessionManager;
 public class IndexHandler extends BaseHandler {
 
     enum MessageStrings {
-        GROUP_IN_USE("That group name is taken.  Please choose another."),
+        GROUP_IN_USE("That group name is taken - please choose another"),
         GROUP_CREATED("Your new group is now being created"),
         GROUP_UPDATED("Group details updated"),
         UPDATE_FAILED("Group update could not be completed"),
@@ -102,6 +102,9 @@ public class IndexHandler extends BaseHandler {
                 context.put("success", MessageStrings.valueOf(request.getParameter("success").toUpperCase()));
             }
 
+            if (request.getParameter("info") != null) {
+                context.put("info", MessageStrings.valueOf(request.getParameter("info").toUpperCase()));
+            }
 
             Handlebars handlebars = loadHandlebars();
             Template template = handlebars.compile("edu/nyu/classes/groupersync/tool/views/layout");

@@ -53,7 +53,7 @@ public class CrudHandler extends BaseHandler {
                     sakaiGroupId,
                     description);
 
-            response.sendRedirect(determineBaseURL().toString() + "?success=group_created");
+            response.sendRedirect(determineBaseURL().toString() + "?info=group_created");
 
         } catch (IdUnusedException e) {
             throw new ServletException("Failed to find site", e);
