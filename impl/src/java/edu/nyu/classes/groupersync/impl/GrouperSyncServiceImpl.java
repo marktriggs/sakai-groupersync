@@ -239,7 +239,6 @@ public class GrouperSyncServiceImpl implements GrouperSyncService {
         try {
             DB.connection(new DBAction() {
                 public void execute(Connection connection) throws SQLException {
-                    // Mark as deleted
                     PreparedStatement ps = connection.prepareStatement("select count(1) from grouper_group_definitions where group_id = ?");
                     ps.setString(1, groupId);
                     ResultSet rs = ps.executeQuery();
@@ -278,6 +277,12 @@ public class GrouperSyncServiceImpl implements GrouperSyncService {
                     dropMembers.executeUpdate();
                     dropMembers.close();
 
+                    // Clear the sync status
+                    PreparedStatement clearStatus = connection.prepareStatement("delete from grouper_sync_status where group_id = ?");
+                    clearStatus.setString(1, groupId);
+                    clearStatus.executeUpdate();
+                    clearStatus.close();
+
                     connection.commit();
                 }
             });
@@ -305,6 +310,11 @@ public class GrouperSyncServiceImpl implements GrouperSyncService {
                     PreparedStatement dropMembers = connection.prepareStatement("delete from grouper_group_users where group_id in (" + detachedGroupSql + ")");
                     dropMembers.executeUpdate();
                     dropMembers.close();
+
+                    // Clear the sync status
+                    PreparedStatement clearStatus = connection.prepareStatement("delete from grouper_sync_status where group_id in (" + detachedGroupSql + ")");
+                    clearStatus.executeUpdate();
+                    clearStatus.close();
 
                     // Mark as deleted
                     PreparedStatement insert = connection.prepareStatement("update grouper_group_definitions set deleted = 1, mtime = ? " +
